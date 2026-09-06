@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the accompanying manuscript."
+title: "RAPID"
+version: "0.1.0"
+date-released: 2026-09-06
+type: software
+license: MIT
+authors:
+  - name: "Manuscript authors"

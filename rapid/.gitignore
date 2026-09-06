@@ -1,0 +1,34 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.venv/
+venv/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.run/
+.DS_Store
+Thumbs.db
+
+# Generated results and diagnostics
+outputs/*
+!outputs/README.md
+results/
+audit_backups/
+*.stdout.log
+*.stderr.log
+
+# Do not add new recordings or derived models accidentally.
+data/*.rhd
+!data/M06_20260129_L_260129_161328_60s.rhd
+data/*.rhd.manifest.json
+models/*.npz
+models/*_audit.csv
+models/reference_pca_unit_model.json

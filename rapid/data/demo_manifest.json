@@ -1,0 +1,9 @@
+{
+  "artifact_type": "bundled_demo_rhd",
+  "block_count": 9375,
+  "data_block_samples": 128,
+  "duration_seconds": 60.0,
+  "file_name": "M06_20260129_L_260129_161328_60s.rhd",
+  "nominal_sample_rate_hz": 20000.0,
+  "sha256": "89B7A7B796DCFCEC18C999F416CF9179ABFBB60820CF88121E66FA367D3EFD8C"
+}

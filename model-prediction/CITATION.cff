@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the accompanying manuscript."
+title: "Neural Signal Prediction"
+version: "0.1.0"
+date-released: 2026-09-04
+type: software
+authors:
+  - name: "Manuscript authors"

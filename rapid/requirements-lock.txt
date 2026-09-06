@@ -1,0 +1,33 @@
+# Exact dependency snapshot: Windows x64, Python 3.10.11, 2026-09-07.
+# pip itself is intentionally not pinned; upgrade pip before installation.
+annotated-types==0.8.0
+asciitree==0.3.3
+certifi==2026.7.22
+charset-normalizer==3.5.1
+cloudpickle==3.1.2
+colorama==0.4.6
+fasteners==0.20
+idna==3.19
+joblib==1.6.0
+llvmlite==0.43.0
+neo==0.14.3
+numba==0.60.0
+numcodecs==0.13.1
+numpy==2.0.2
+packaging==26.3
+probeinterface==0.3.2
+pydantic==2.13.5
+pydantic-core==2.46.5
+quantities==0.16.4
+requests==2.34.2
+scikit-learn==1.6.1
+scipy==1.15.3
+setuptools==75.8.0
+spikeinterface==0.103.2
+threadpoolctl==3.6.0
+tqdm==4.70.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+urllib3==2.7.0
+wheel==0.45.1
+zarr==2.18.3

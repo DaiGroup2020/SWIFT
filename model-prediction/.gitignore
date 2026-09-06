@@ -1,0 +1,37 @@
+__pycache__/
+*.py[cod]
+.venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.vscode/
+.run/
+.env
+*.log
+
+# Keep only the documented compact demo assets under version control.
+data/*
+!data/README.md
+!data/demo/
+!data/demo/**
+
+# Keep only the released checkpoint and its documentation under version control.
+models/*
+!models/README.md
+!models/top64_local_peak/
+!models/top64_local_peak/**
+
+# Never commit credentials or private key material.
+*.key
+*.pem
+*.p12
+
+# Runtime artifacts (the directory itself is retained for documented outputs).
+outputs/*
+!outputs/.gitkeep

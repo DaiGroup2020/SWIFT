@@ -1,0 +1,5 @@
+* text=auto eol=lf
+data/M06_20260129_L_260129_161328_60s.rhd filter=lfs diff=lfs merge=lfs -text
+# Preserve the exact bytes used by the asset integrity checks.
+data/ChannelParam_20260129.json -text
+models/fpga14_local_peak_no_boundary_tmpl0129.csv -text

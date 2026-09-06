@@ -1,0 +1,5 @@
+* text=auto eol=lf
+
+models/**/*.pt filter=lfs diff=lfs merge=lfs -text
+data/demo/*.csv filter=lfs diff=lfs merge=lfs -text
+data/demo/*.dat filter=lfs diff=lfs merge=lfs -text

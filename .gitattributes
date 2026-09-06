@@ -1,0 +1,2 @@
+# Keep repository text portable; project-specific LFS/-text rules take precedence.
+* text=auto eol=lf

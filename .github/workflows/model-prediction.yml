@@ -1,0 +1,80 @@
+name: Prediction CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      full_demo:
+        description: Download LFS assets and reproduce the complete prediction demo
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: model-prediction
+
+jobs:
+  test:
+    name: Data-free regression tests
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: model-prediction/requirements-lock.txt
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+      - name: Install validated dependencies
+        run: python -m pip install -r requirements-lock.txt
+      - name: Install package
+        run: python -m pip install --no-deps --no-build-isolation .
+      - name: Run all data-free tests
+        run: python -m unittest discover -s tests -v
+
+  full-demo:
+    name: Full bundled demo
+    if: github.event_name == 'workflow_dispatch' && inputs.full_demo
+    needs: test
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: model-prediction/requirements-lock.txt
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+      - name: Install validated dependencies
+        run: python -m pip install -r requirements-lock.txt
+      - name: Install package
+        run: python -m pip install --no-deps --no-build-isolation .
+      - name: Run the complete prediction demo
+        run: python scripts/run_demo.py --device cpu
+      - name: Verify demo outputs
+        run: python scripts/verify_demo.py --output-dir outputs/demo_prediction
+      - name: Upload compact demo reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-prediction-demo-reports
+          path: |
+            model-prediction/outputs/demo_prediction/prediction_summary_*.json
+            model-prediction/outputs/demo_prediction/predictions_*.png
+          if-no-files-found: warn
+          retention-days: 14

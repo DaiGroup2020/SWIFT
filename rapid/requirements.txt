@@ -1,0 +1,6 @@
+# Tested release environment (Python 3.9+)
+numpy==2.0.2
+numba==0.60.0
+scikit-learn==1.6.1
+spikeinterface==0.103.2
+neo==0.14.3
