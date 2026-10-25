@@ -60,12 +60,18 @@ Results are saved in `outputs/demo_prediction/`:
 |---|---|
 | `predictions_2026-02-02.csv` | Timestamps, predicted velocity, and reference velocity |
 | `prediction_summary_2026-02-02.json` | Input checksums, calibration details, and metrics |
-| `predictions_2026-02-02.png` | Predicted and reference velocity traces |
+| `predictions_2026-02-02.png` | Predicted and reference velocity traces, with joint vx/vy R² |
 
 The demo calibrates using spikes from the first 200 seconds. Its 7,950 decoded
 rows cover the whole replay, including that period. The summary reports both
 whole-replay metrics and a separate post-calibration score that excludes
 decoder windows overlapping calibration.
+
+The figure reports joint vx/vy R² over all valid samples in the plotted time
+interval, calculated before display downsampling. For the default full replay,
+this includes calibration and is approximately 0.8884. The separate
+post-calibration R² is recorded in the JSON summary, not substituted for the
+full-replay figure score. No R² is shown when evaluation is skipped.
 
 Precomputed CSV/JSON/PNG examples are included in
 [outputs/reference](outputs/reference/README.md). Normal runs use

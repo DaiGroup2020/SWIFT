@@ -675,6 +675,16 @@ def save_prediction_plot(
     y_pred_plot = y_pred[mask]
     y_true_plot = y_true[mask] if y_true is not None else None
 
+    # Score the selected interval before thinning points for display.
+    # Use the same joint vx/vy definition as the evaluation summary.
+    plot_r2 = None
+    if y_true_plot is not None:
+        valid = np.isfinite(y_true_plot).all(axis=1) & np.isfinite(y_pred_plot).all(axis=1)
+        if np.count_nonzero(valid) >= 2:
+            targets = y_true_plot[valid]
+            if np.sum((targets - targets.mean(axis=0, keepdims=True)) ** 2) > 0:
+                plot_r2 = regression_metrics(targets, y_pred_plot[valid])["r2"]
+
     if max_points is not None and max_points > 0 and len(t_plot) > max_points:
         sample_idx = np.linspace(0, len(t_plot) - 1, num=max_points, dtype=np.int64)
         sample_idx = np.unique(sample_idx)
@@ -698,7 +708,12 @@ def save_prediction_plot(
     if y_true_plot is None:
         fig.suptitle(f"Predicted control voltage | {day_name}")
     else:
-        fig.suptitle(f"Predicted vs true control voltage | {day_name}")
+        score_label = (
+            rf"$R^2$ = {plot_r2:.4f} (vx + vy; plotted interval)"
+            if plot_r2 is not None
+            else r"$R^2$ unavailable (insufficient or constant valid targets)"
+        )
+        fig.suptitle(f"Predicted vs true control voltage | {day_name}\n{score_label}")
     fig.tight_layout()
     fig.savefig(output_path, dpi=150)
     plt.close(fig)
