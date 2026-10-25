@@ -1,8 +1,7 @@
-# Verified prediction reference outputs
+# Prediction example outputs
 
 These files were produced on 2026-10-25 with Python 3.10.11 and the locked
-CPU environment. They passed
-`scripts/verify_demo.py` and were copied unchanged for release 0.2.1.
+CPU environment and are included unchanged for release 0.2.1.
 
 | File | Expected content |
 | --- | --- |
@@ -16,21 +15,13 @@ has RMSE approximately 0.39822554 and R2 approximately 0.88841956. The separate
 0.44549288 and R2 approximately 0.82825918. It retains causal recurrent
 history, as explained in [the protocol](../../docs/REPRODUCIBILITY.md).
 
-From `model-prediction/`, check these included files without installing
-scientific dependencies:
-
-```powershell
-python scripts/verify_demo.py --output-dir outputs/reference
-```
-
 To regenerate them, install the project as described in the README and run
-the normal demo into a separate directory:
+the normal demo into a separate directory from `model-prediction/`:
 
 ```powershell
 python scripts/run_demo.py --device cpu --output-dir outputs/demo_prediction
-python scripts/verify_demo.py --output-dir outputs/demo_prediction
 ```
 
-The verifier compares numerical results within the documented tolerances;
-PNG bytes are not required to match across rendering/library versions.
+Small numerical differences can occur across devices and library versions;
+PNG bytes can also differ across rendering versions.
 These results are licensed under GPL-3.0-only; see [NOTICE](../../NOTICE).

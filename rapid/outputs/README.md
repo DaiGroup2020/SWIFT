@@ -8,6 +8,6 @@ the two large CSVs use Git LFS (`git lfs pull`).
 Running the documented demo creates the complete result tree under
 `outputs/demo-60s/`, including the per-channel/per-unit exports. Those locally
 generated directories remain ignored by Git. The compact reference is not a
-substitute for running and verifying the complete demo.
+substitute for running the complete demo.
 
 Reference results use GPL-3.0-only; see [NOTICE](../NOTICE).

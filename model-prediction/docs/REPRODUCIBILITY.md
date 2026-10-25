@@ -1,4 +1,4 @@
-# Reproduce the prediction demo
+# Prediction demonstration and functional description
 
 Run commands on this page from the `model-prediction/` project directory. From
 the SWIFT root directory, enter it with `cd model-prediction` first.
@@ -7,15 +7,13 @@ the SWIFT root directory, enter it with `cd model-prediction` first.
 
 Follow the Python 3.10 installation commands in [README.md](../README.md).
 `requirements-lock.txt` fixes the dependency versions, including stable
-PyTorch 2.8.0 with CPU support. CPU is the shared verification environment;
+PyTorch 2.8.0 with CPU support. CPU is the documented demonstration environment;
 the program also supports a compatible CUDA-enabled PyTorch installation.
 
 From the `model-prediction/` project directory, run:
 
 ```powershell
-python -m unittest discover -s tests -v
 python scripts/run_demo.py --device cpu
-python scripts/verify_demo.py --output-dir outputs/demo_prediction
 ```
 
 Existing session outputs require `--overwrite`, or choose a fresh directory
@@ -25,9 +23,8 @@ if they have not been downloaded.
 
 ## Functional description and pseudocode
 
-This section describes the prediction code's actual operations and is the
-repository location supplied in the submission checklist. It is a software
-description, not a claim that this text appears in the manuscript.
+This section describes the prediction code's operations, model, calibration
+objective, and decoding procedure.
 
 ### Inputs and fixed model
 
@@ -130,8 +127,6 @@ scores must not be described as a prospective online test.
   session adaptation and continuous latent encoding.
 - [manifold_decoder.py](../src/neural_signal_decoder/manifold_decoder.py):
   the encoded LSTM, scaling and shared regression utilities.
-- [verify_demo.py](../scripts/verify_demo.py): independent input-hash and
-  output checks.
 
 The optional training module first fits reference dynamics using spike
 reconstruction and supervised behavior loss, adapts other sessions using
@@ -172,16 +167,10 @@ mapping details, and evaluation settings. Historical path strings embedded in
 the frozen checkpoint are provenance metadata and are not used to find inputs
 or choose output destinations.
 
-## Validation record and documentation references
+## Example results
 
-See [DEPLOYMENT_VALIDATION.md](DEPLOYMENT_VALIDATION.md) for recorded results.
+The [reference outputs](../outputs/reference/README.md) contain the prediction
+CSV, evaluation summary, and figure for the bundled recording.
 For comparisons, use the same input files, locked environment, calibration,
 device, and evaluation interval. GPU/library changes can alter numerical
 results slightly.
-
-The concise installation/demo/output layout follows examples such as
-[Kilosort4](https://github.com/MouseLand/Kilosort) (Nature Methods) and
-[speechBCI](https://github.com/fwillett/speechBCI) (Nature).
-[Nature's code publication guidance](https://www.nature.com/documents/GuidelinesCodePublication.pdf)
-informs the environment and run records; it does not prescribe a single
-README template.

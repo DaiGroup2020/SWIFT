@@ -48,6 +48,6 @@ unit/<rhd-stem>/
 
 The demo omits filtered traces by default; add `--write-band-dat` to save `band-<channel>.DAT` and `time.DAT`. The lower-level `channel` and `all-days` commands save those files by default and offer `--no-band-dat` to omit them. Filtered channel traces are little-endian signed 16-bit ADC counts, with a scale of 0.195 microvolts per count. `time.DAT` contains little-endian signed 32-bit timestamp ticks.
 
-Manifests contain file names, SHA-256 input fingerprints, settings, and event counts. Their creation timestamps vary between runs. The [reproducibility guide](REPRODUCIBILITY.md) records the expected demonstration CSV hashes and counts.
+Manifests contain file names, SHA-256 input fingerprints, settings, and event counts. Their creation timestamps vary between runs. The [reference outputs](../outputs/reference/README.md) document the expected demonstration CSV hashes and counts.
 
 Existing session directories are rejected unless `--overwrite` is supplied. With that flag, previous directories are renamed to sibling `<session>.backup-<UUID>` folders before new results are written. Outputs that overlap required inputs are rejected. The `all-days` command also rejects recordings whose names would map to the same output directory.

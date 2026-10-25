@@ -35,12 +35,11 @@ From the `rapid/` project directory:
 ```powershell
 python -m rapid check-env
 python scripts/run_demo.py --results-root outputs/demo-60s --chunk-blocks 64
-python scripts/verify_demo.py --results-root outputs/demo-60s
 ```
 
-The included recording produces 439,597 channel events and 439,597 unit assignments. The verification command checks the demonstration results against the recorded reference.
+The included recording produces 439,597 channel events and 439,597 unit assignments. Example event tables and manifests are included in [outputs/reference](outputs/reference/README.md).
 
-Expected runtime is approximately 40 seconds on the tested desktop: this 60-second replay took 40.06 seconds with `--chunk-blocks 64` and no filtered-trace output. This is software replay time, not FPGA throughput or latency. The included checks validate the software outputs, not equivalence to a physical FPGA implementation.
+Expected runtime is approximately 40 seconds on the tested desktop: this 60-second replay took 40.06 seconds with `--chunk-blocks 64` and no filtered-trace output. This is software replay time, not FPGA throughput or latency, and does not establish equivalence to a physical FPGA implementation.
 
 ## Results
 
@@ -62,8 +61,7 @@ The two CSV files contain the detected events and their unit assignments. The pe
 Precomputed main event CSVs and manifests are included in
 [outputs/reference](outputs/reference/README.md). They are a compact reference,
 not the complete per-channel/per-unit export tree. Normal runs write to
-`outputs/demo-60s/`, leaving the reference files unchanged. Check the included
-reference files with `python scripts/verify_demo.py --reference-only --results-root outputs/reference`.
+`outputs/demo-60s/`, leaving the reference files unchanged.
 
 Add `--write-band-dat` to the demo command to save filtered traces. To repeat a run in the same location, add `--overwrite`; existing result directories are retained beside the new results as `.backup-<UUID>` folders.
 
@@ -75,8 +73,8 @@ Supply a 20 kHz Intan RHD recording with 128-sample data blocks, its channel-par
 python scripts/run_demo.py --rhd "path/to/recording.rhd" --channel-param "path/to/ChannelParam.json" --model "path/to/reference_map.csv" --results-root outputs/my-recording --chunk-blocks 64
 ```
 
-Channel identifiers, enabled channels, thresholds, and reference-map intervals must match your recording. The bundled parameters and map are specific to the example; do not assume they apply to other recordings. See the [input/output schema](docs/INPUT_OUTPUT_SCHEMA.md) for file formats. `verify_demo.py` checks only the bundled example and its expected results, not arbitrary recordings.
+Channel identifiers, enabled channels, thresholds, and reference-map intervals must match your recording. The bundled parameters and map are specific to the example; do not assume they apply to other recordings. See the [input/output schema](docs/INPUT_OUTPUT_SCHEMA.md) for file formats. Event counts and reference outputs in this README apply only to the bundled example, not arbitrary recordings.
 
 ## License and further information
 
-The DaiGroup-owned software, bundled demo data, channel parameters, reference map, and reference outputs are licensed under GNU GPL version 3 only (`GPL-3.0-only`); see [LICENSE](LICENSE), [NOTICE](NOTICE), and the [asset license table](../ASSET_LICENSES.md). Third-party software retains its own licensing terms. See [CITATION.cff](CITATION.cff) for citation metadata, the [demonstration validation record](docs/REPRODUCIBILITY.md) for measured results, and [method details](docs/METHODS.md) for the processing steps.
+The DaiGroup-owned software, bundled demo data, channel parameters, reference map, and reference outputs are licensed under GNU GPL version 3 only (`GPL-3.0-only`); see [LICENSE](LICENSE), [NOTICE](NOTICE), and the [asset license table](../ASSET_LICENSES.md). Third-party software retains its own licensing terms. See [CITATION.cff](CITATION.cff) for citation metadata and [method details](docs/METHODS.md) for the processing steps.

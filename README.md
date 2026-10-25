@@ -22,13 +22,9 @@ The recording, prediction data, and checkpoint use Git LFS. Their full contents 
 
 ## Install and run a project
 
-From the SWIFT root directory, enter `rapid/` with `cd rapid`, or enter `model-prediction/` with `cd model-prediction`. Follow the selected project's README to create its environment, install its dependencies, run the demonstration, and verify the outputs.
+From the SWIFT root directory, enter `rapid/` with `cd rapid`, or enter `model-prediction/` with `cd model-prediction`. Follow the selected project's README to create its environment, install its dependencies, and run the demonstration.
 
 Each project uses its own virtual environment and dependency lock file. Use a separate terminal session for each project. The project READMEs and documentation contain the tested environment, expected results, citation metadata, and license.
-
-## Automated checks
-
-The [RAPID workflow](.github/workflows/rapid.yml) and [prediction workflow](.github/workflows/model-prediction.yml) run their respective data-free tests. Manually enabling `full_demo` also downloads the LFS assets, runs the selected complete demonstration, and verifies its outputs.
 
 ## License
 
@@ -41,8 +37,6 @@ project's [provenance record](model-prediction/docs/PROVENANCE.md).
 
 The [asset license table](ASSET_LICENSES.md) identifies the bundled data,
 reference map, weights, and reference outputs covered by this release.
-See the [submission checklist map](CODE_SUBMISSION_CHECKLIST.md) for the
-documentation corresponding to each checklist item. Verified example results
-are included separately in [RAPID outputs](rapid/outputs/README.md) and
+Example results are included separately in [RAPID outputs](rapid/outputs/README.md) and
 [prediction outputs](model-prediction/outputs/README.md); normal demo runs do
 not overwrite these reference files.

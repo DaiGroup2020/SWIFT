@@ -52,5 +52,5 @@ dropout 0.25, and decoder dropout 0.15.
 
 Its reported aggregate over 13 future sessions was RMSE 0.620843, MAE 0.482758,
 and R2 0.764512. These are historical model-training results, not scores
-recomputed by the bundled 240-second demo. Current demo validation belongs in
-[DEPLOYMENT_VALIDATION.md](../../docs/DEPLOYMENT_VALIDATION.md).
+recomputed by the bundled 240-second demo. Results from that demonstration are
+provided in [outputs/reference](../../outputs/reference/README.md).

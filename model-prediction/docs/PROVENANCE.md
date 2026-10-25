@@ -7,8 +7,8 @@ independently with reference to the NoMAD paper, without copying, translating,
 or adapting the official NoMAD source code. This statement records the authors'
 declaration of origin. The authors further confirm that they did not download
 the official NoMAD source code during development and trained the released
-weights themselves. A limited source comparison is recorded in
-[SOURCE_REVIEW.md](SOURCE_REVIEW.md); it is not a legal review.
+weights themselves. This declaration is not an independent source-origin
+audit or a legal review.
 This package is not an official release of NoMAD.
 
 ## Method reference
@@ -49,14 +49,15 @@ architectural equivalence to the original NoMAD software. See the
 
 | Item | Available source information | Record to retain or complete |
 | --- | --- | --- |
-| Prediction source code | Authors' independent-development declaration above; software contributors in `CITATION.cff`; limited source and import review in `SOURCE_REVIEW.md` | Preserve original development files, dated revisions, and a list of third-party code, if any. |
+| Prediction source code | Authors' independent-development declaration above; software contributors in `CITATION.cff` | Preserve original development files, dated revisions, and a list of third-party code, if any. |
 | Method inspiration | NoMAD paper and DOI above | Cite the paper in publications and describe the actual implementation. |
-| Bundled checkpoint | Authors confirm that they trained the released weights themselves; configuration and historical training results in the model card and `summary.json`; checksum verified by `scripts/verify_demo.py` | Retain training scripts, data provenance, training logs, and the applicable permission to distribute weights. The authors' declaration is distinct from independently auditing the historical training run. |
-| Demo spike CSV and voltage log | File descriptions in `data/demo/README.md`; input checksums in `scripts/verify_demo.py` | Retain recording provenance and the applicable permission to distribute the data. |
+| Bundled checkpoint | Authors confirm that they trained the released weights themselves; configuration and historical training results in the model card and `summary.json`; input checksum in `outputs/reference/prediction_summary_2026-02-02.json` | Retain training scripts, data provenance, training logs, and the applicable permission to distribute weights. The authors' declaration is distinct from independently auditing the historical training run. |
+| Demo spike CSV and voltage log | File descriptions in `data/demo/README.md`; input checksums in `outputs/reference/prediction_summary_2026-02-02.json` | Retain recording provenance and the applicable permission to distribute the data. |
 | Python dependencies | Direct dependencies in `pyproject.toml`; exact tested versions in `requirements-lock.txt` | Keep dependency license notices as required when redistributing dependencies. |
 
-The table identifies existing records and remaining release checks. It does not
-assert that missing historical records or asset permissions have been supplied.
+The table identifies available records and provenance information to retain.
+It does not assert that historical training or third-party permissions have
+been independently audited.
 
 ## Licensing status
 

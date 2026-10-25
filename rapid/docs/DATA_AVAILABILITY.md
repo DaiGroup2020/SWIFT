@@ -4,6 +4,6 @@ This repository provides the RAPID source code, a fixed reference map, channel c
 
 The RHD is managed through Git LFS. After cloning, run `git lfs pull` to retrieve its complete contents. File details and the input digest are in [data/README.md](../data/README.md); the fixed map is described in [models/README.md](../models/README.md).
 
-Generated results are written locally under the selected output directory. The [README](../README.md) gives the complete installation, run, and verification commands. The [reproducibility guide](REPRODUCIBILITY.md) records the tested environment and expected results.
+Generated results are written locally under the selected output directory. The [README](../README.md) gives the installation and run commands, tested environment, and expected results. Precomputed example event tables and manifests are in [outputs/reference](../outputs/reference/README.md).
 
-Complete the author and repository identifiers in `CITATION.cff` before publication.
+Author and repository identifiers are provided in [CITATION.cff](../CITATION.cff).

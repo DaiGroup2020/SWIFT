@@ -37,7 +37,7 @@ GPU. For GPU use, install a compatible CUDA-enabled PyTorch build and select
 Typical installation on the tested desktop took approximately 2-3 minutes
 (140.58 seconds), excluding package and data downloads. The CPU PyTorch
 wheel is approximately 619 MB; download speed can substantially increase
-setup time. See the [validation record](docs/DEPLOYMENT_VALIDATION.md).
+setup time.
 
 ## Run the example
 
@@ -45,11 +45,10 @@ Run from the `model-prediction/` project directory:
 
 ```powershell
 python scripts/run_demo.py --device cpu
-python scripts/verify_demo.py --output-dir outputs/demo_prediction
 ```
 
-The first command uses the bundled checkpoint, spike CSV, and matching voltage
-log. The second checks the generated results against the demo reference.
+The command uses the bundled checkpoint, spike CSV, and matching voltage
+log.
 
 Expected runtime is approximately 74 seconds on the tested desktop using the
 locked CPU environment. This is an offline software replay, not a guarantee
@@ -68,10 +67,9 @@ rows cover the whole replay, including that period. The summary reports both
 whole-replay metrics and a separate post-calibration score that excludes
 decoder windows overlapping calibration.
 
-Precomputed, verified CSV/JSON/PNG examples are included in
+Precomputed CSV/JSON/PNG examples are included in
 [outputs/reference](outputs/reference/README.md). Normal runs use
-`outputs/demo_prediction/`, leaving these reference files unchanged. You can
-check the included files with `python scripts/verify_demo.py --output-dir outputs/reference`.
+`outputs/demo_prediction/`, leaving these reference files unchanged.
 
 ## Run again or choose another output folder
 
@@ -83,21 +81,16 @@ python scripts/run_demo.py --device cpu --output-dir outputs/my_run
 Add `--skip-evaluation` to predict without reading the voltage log. This writes
 predicted velocity without reference columns or evaluation scores.
 
-## Tests and details
-
-```powershell
-python -m unittest discover -s tests -v
-```
+## Use your own recording and further details
 
 For another compatible recording, see the command-line options with
 `python scripts/predict_future_day.py --help` and read the
 [input format](docs/DATA_FORMAT.md). The checkpoint expects 213 named units;
 `top64` describes its upstream channel selection, not its input-column count.
 
-The [reproducibility guide](docs/REPRODUCIBILITY.md) explains calibration,
+The [functional description](docs/REPRODUCIBILITY.md) explains calibration,
 evaluation, and configuration. Model details are in the
-[model card](models/top64_local_peak/MODEL_CARD.md), and validation records are
-in [deployment validation](docs/DEPLOYMENT_VALIDATION.md).
+[model card](models/top64_local_peak/MODEL_CARD.md).
 
 ## Citation and license
 

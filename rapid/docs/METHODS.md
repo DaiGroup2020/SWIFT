@@ -2,7 +2,7 @@
 
 ## Intended replay
 
-RAPID replays a fixed 20 kHz channel-based processing path for Intan RHD recordings. The bundled example detects events and assigns them using the supplied channel configuration and interval map. The measured CPU replay time is recorded separately in [REPRODUCIBILITY.md](REPRODUCIBILITY.md).
+RAPID replays a fixed 20 kHz channel-based processing path for Intan RHD recordings. The bundled example detects events and assigns them using the supplied channel configuration and interval map. The measured CPU replay time is recorded in the [README](../README.md).
 
 ## Channel path
 
@@ -74,8 +74,7 @@ The implementation is in [preprocessing.py](../rapid/preprocessing.py)
 (`FPGAPeakSelector` and channel exports), [local_peak_no_boundary.py](../rapid/local_peak_no_boundary.py)
 (fixed-map loading), and [unit_sorting.py](../rapid/unit_sorting.py)
 (assignment and unit exports). The entry point is
-[run_demo.py](../scripts/run_demo.py); [verify_demo.py](../scripts/verify_demo.py)
-checks the expected example outputs.
+[run_demo.py](../scripts/run_demo.py).
 
 The bundled replay produces 439,597 detected events and the same number of
 unit assignments, with 591 catalogue units and 575 nonempty units. Main CSVs

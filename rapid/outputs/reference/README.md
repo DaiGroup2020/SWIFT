@@ -1,10 +1,9 @@
-# Verified RAPID reference outputs
+# RAPID example outputs
 
 These files were produced by the full bundled 60-second software replay on
 2026-10-25 with Python 3.10.11, the locked dependencies, and
-`--chunk-blocks 64`, without filtered-trace output. The full
-result tree passed `scripts/verify_demo.py` before these files were copied
-unchanged into this compact reference directory for release 0.2.1.
+`--chunk-blocks 64`, without filtered-trace output. The main event tables and
+manifests are included unchanged as a compact reference for release 0.2.1.
 
 | File | Expected content |
 | --- | --- |
@@ -13,20 +12,13 @@ unchanged into this compact reference directory for release 0.2.1.
 | `channel_manifest.json` | Input fingerprint, channel count, and processing settings |
 | `unit_manifest.json` | Input/map fingerprints and assignment counts |
 
-The CSVs use Git LFS. Fetch them with `git lfs pull`, then run from `rapid/`:
-
-```powershell
-python scripts/verify_demo.py --reference-only --results-root outputs/reference
-```
-
-This checks the source assets, exact main CSV hashes and manifest fields.
-It does not check the per-channel/per-unit export files, which are omitted
-here to avoid distributing thousands of redundant files. Generate and verify
-the complete result tree separately:
+The CSVs use Git LFS; fetch them with `git lfs pull`. Per-channel/per-unit
+timestamp exports are omitted here to avoid distributing thousands of
+redundant files. To generate the complete result tree, install the project as
+described in the README and run from `rapid/`:
 
 ```powershell
 python scripts/run_demo.py --results-root outputs/demo-60s --chunk-blocks 64
-python scripts/verify_demo.py --results-root outputs/demo-60s
 ```
 
 CSV SHA-256 values:
