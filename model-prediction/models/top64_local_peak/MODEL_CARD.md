@@ -1,11 +1,20 @@
 # Local-peak top64 model
 
+The prediction source is an independent DaiGroup implementation informed by
+the NoMAD paper, as declared by the project authors. See
+[method attribution and provenance](../../docs/PROVENANCE.md) for the citation,
+implementation details, and the separate checkpoint and data source records.
+
+The project authors confirm that the bundled weights were trained by their
+team. The retained configuration and scores below document the local training
+record; this declaration does not constitute a new independent training run.
+
 ## Checkpoint
 
 | Property | Value |
 |---|---|
 | File | `manifold_lstm_decoder.pt` |
-| Family | NoMAD-style latent dynamics, spike-only alignment, encoded LSTM decoder |
+| Family | Latent dynamics, spike-only session alignment, encoded LSTM decoder |
 | Input | 213 identified spike units; names stored in checkpoint `unit_cols` |
 | Output | Two-dimensional velocity (`vx`, `vy`) |
 | Bin size | 30 ms |

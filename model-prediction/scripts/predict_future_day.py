@@ -7,7 +7,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from neural_signal_decoder.predict_nomad import main
+from neural_signal_decoder.predict_aligned_decoder import main
 
 
 if __name__ == "__main__":

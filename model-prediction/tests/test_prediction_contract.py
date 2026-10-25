@@ -14,7 +14,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from neural_signal_decoder.manifold_decoder import interpolate_columns
+from neural_signal_decoder.manifold_decoder import build_decoder_model_from_kwargs, interpolate_columns
 from neural_signal_decoder.predict import (
     DEFAULT_OUTPUT_DIR,
     build_prediction_windows,
@@ -22,8 +22,9 @@ from neural_signal_decoder.predict import (
     load_spike_csv_aligned,
     require_materialized_file,
 )
-from neural_signal_decoder.predict_nomad import (
+from neural_signal_decoder.predict_aligned_decoder import (
     evaluate_prediction_segments,
+    is_supported_checkpoint_family,
     make_output_paths,
     post_calibration_window_mask,
     prepare_output_paths,
@@ -31,6 +32,29 @@ from neural_signal_decoder.predict_nomad import (
 
 
 class PredictionContractTests(unittest.TestCase):
+    def test_current_checkpoint_family_is_supported(self) -> None:
+        self.assertTrue(is_supported_checkpoint_family("aligned_lstm"))
+
+    def test_released_checkpoint_family_remains_supported(self) -> None:
+        self.assertTrue(is_supported_checkpoint_family("nomad_lstm"))
+
+    def test_unknown_checkpoint_family_is_rejected(self) -> None:
+        self.assertFalse(is_supported_checkpoint_family("unrelated_decoder"))
+        self.assertFalse(is_supported_checkpoint_family(None))
+
+    def test_current_and_legacy_decoder_aliases_have_identical_outputs(self) -> None:
+        kwargs = dict(input_dim=3, seq_len=4, time_dim=2, latent_embed_dim=2,
+                      hidden_dim=4, num_layers=1, dropout=0.0, output_dim=2)
+        values = torch.ones(2, 4, 3)
+        for current, legacy in (("aligned_lstm", "nomad_lstm"),
+                                ("aligned_lstm_v2", "nomad_lstm_v2")):
+            with self.subTest(variant=current):
+                model = build_decoder_model_from_kwargs({**kwargs, "decoder_variant": current}).eval()
+                restored = build_decoder_model_from_kwargs({**kwargs, "decoder_variant": legacy}).eval()
+                restored.load_state_dict(model.state_dict())
+                with torch.no_grad():
+                    torch.testing.assert_close(model(values), restored(values), rtol=0, atol=0)
+
     def test_decoder_windows_are_causal(self) -> None:
         latent = np.arange(12, dtype=np.float32).reshape(6, 2)
         windows, endpoints = build_prediction_windows(latent, 3)

@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 """
-Spike-only prediction for NoMAD-style latent dynamics + LSTM checkpoints.
+Spike-only prediction for aligned latent-dynamics and LSTM checkpoints.
 
 Workflow:
-1. Load a trained `nomad_lstm` checkpoint.
+1. Load a trained aligned LSTM checkpoint.
 2. Read a future day's spike CSV only.
 3. Use an initial spike-only calibration window to fit a day-specific alignment net.
 4. Project the whole session into the shared latent-dynamics space.
@@ -31,7 +31,7 @@ from .manifold_decoder import (
     read_voltage_dat,
     regression_metrics,
 )
-from .manifold_decoder_MoMAD import (
+from .train_aligned_decoder import (
     Config,
     ReferenceDynamicsModel,
     ResidualAlignmentNet,
@@ -67,9 +67,14 @@ from .manifold_decoder import build_decoder_model_from_kwargs
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_CONFIG_PATH = SCRIPT_DIR / "predict_nomad_config.json"
-DEFAULT_MODEL_DIR = SCRIPT_DIR / "model_Nomad"
+DEFAULT_CONFIG_PATH = SCRIPT_DIR / "prediction_config.json"
+DEFAULT_MODEL_DIR = SCRIPT_DIR / "aligned_models"
 PREDICT_ALIGNMENT_SEED = 42
+
+
+def is_supported_checkpoint_family(model_family: object) -> bool:
+    """Accept the current family and the unchanged released checkpoint's legacy tag."""
+    return model_family in ("aligned_lstm", "nomad_lstm")
 
 USER_EDITABLE_SETTINGS: dict[str, object] = {
     "model_path": "",
@@ -127,18 +132,18 @@ def resolve_inline_settings(base_dir: Path) -> dict[str, object]:
     }
 
 
-def auto_discover_nomad_model_path() -> Path:
+def auto_discover_model_path() -> Path:
     if not DEFAULT_MODEL_DIR.exists():
-        raise FileNotFoundError(f"No NoMAD model directory exists: {DEFAULT_MODEL_DIR}")
+        raise FileNotFoundError(f"No decoder model directory exists: {DEFAULT_MODEL_DIR}")
     candidates = [path for path in DEFAULT_MODEL_DIR.rglob("manifold_lstm_decoder.pt") if path.is_file()]
     if not candidates:
-        raise FileNotFoundError(f"No NoMAD checkpoints were found in {DEFAULT_MODEL_DIR}")
+        raise FileNotFoundError(f"No decoder checkpoints were found in {DEFAULT_MODEL_DIR}")
     candidates.sort(key=lambda path: path.stat().st_mtime, reverse=True)
     return candidates[0]
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Predict future control signals using NoMAD-style spike-only calibration.")
+    parser = argparse.ArgumentParser(description="Predict future control signals using aligned latent-dynamics spike-only calibration.")
     parser.add_argument("--model-path", type=Path, default=None)
     parser.add_argument("--spike-csv", type=Path, default=None)
     parser.add_argument("--allow-missing-units", action="store_true", help="Explicitly assume zero spikes for missing checkpoint Unit identities (at least one identity must match).")
@@ -154,7 +159,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--no-daily-calibration",
         action="store_true",
-        help="Skip day-specific NoMAD alignment and run the checkpoint shared GRU dynamics + decoder directly.",
+        help="Skip day-specific session alignment and run the checkpoint shared GRU dynamics + decoder directly.",
     )
     parser.add_argument("--calibration-time-start", type=float, default=None)
     parser.add_argument("--calibration-time-end", type=float, default=None)
@@ -312,7 +317,7 @@ def main() -> None:
         args.model_path = (
             inline_settings["model_path"]
             or resolve_config_path(config_payload.get("model_path"), config_dir)
-            or auto_discover_nomad_model_path()
+            or auto_discover_model_path()
         )
     if args.spike_csv is None:
         args.spike_csv = (
@@ -382,8 +387,8 @@ def main() -> None:
         require_materialized_file(args.voltage_dat)
 
     checkpoint = load_checkpoint(args.model_path, device="cpu")
-    if checkpoint.get("model_family") != "nomad_lstm":
-        raise ValueError(f"{args.model_path} is not a nomad_lstm checkpoint.")
+    if not is_supported_checkpoint_family(checkpoint.get("model_family")):
+        raise ValueError(f"{args.model_path} is not a supported aligned LSTM checkpoint.")
 
     reference_model = ReferenceDynamicsModel(**checkpoint["reference_model_kwargs"]).to(args.device)
     reference_model.load_state_dict(checkpoint["reference_model_state_dict"])
@@ -569,8 +574,8 @@ def main() -> None:
     }
     summary_payload = {
         "mode": "prediction",
-        "model_family": "nomad_lstm",
-        "model_backend": "nomad_style_dynamics",
+        "model_family": "aligned_lstm",
+        "model_backend": "latent_dynamics",
         "inference_mode": "direct_shared_dynamics" if args.no_daily_calibration else "daily_calibration",
         "no_daily_calibration": bool(args.no_daily_calibration),
         "day_name": session_name,
@@ -621,9 +626,9 @@ def main() -> None:
             f"calibration_day_name={calibration_source_day_name}"
         )
     else:
-        print(f"Using NoMAD calibration window: start={args.calibration_time_start}, end={args.calibration_time_end}")
+        print(f"Using session calibration window: start={args.calibration_time_start}, end={args.calibration_time_end}")
     if args.skip_reference_update or args.update_state_path is not None:
-        print("Note: NoMAD prediction does not write predictor_state updates; calibration is per-run only.")
+        print("Note: This predictor does not write predictor_state updates; calibration is per-run only.")
     print(f"Prediction CSV: {paths['predictions_csv'].resolve()}")
     print(f"Prediction plot: {paths['predictions_png'].resolve()}")
     print(f"Summary JSON: {paths['summary_json'].resolve()}")

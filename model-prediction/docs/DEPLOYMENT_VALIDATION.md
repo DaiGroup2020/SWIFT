@@ -97,3 +97,29 @@ RMSE 0.465512, MAE 0.343437, R2 0.840551 and a separate deployment run of
 RMSE 0.419830, MAE 0.326186, R2 0.870491. These used different alignment or
 recording settings. They are retained only as historical context and are not
 the expected results of the bundled demo.
+
+## Version 0.2.0 validation — 2026-10-25
+
+Validated on Windows x64 (build 22631) using a new isolated Python 3.10.11
+environment and the unchanged `requirements-lock.txt`, including PyTorch
+2.8.0+cpu. The package built and installed as `neural-signal-prediction` 0.2.0;
+`pip check` passed, and the distribution included both LICENSE and NOTICE.
+
+- All 21 data-free tests passed, including renamed-module help, current and
+  legacy checkpoint families, and identical outputs for current/legacy
+  decoder aliases restored from the same state dictionary.
+- The full 240-second demo and `scripts/verify_demo.py` passed: 7,950
+  predictions, RMSE 0.39822554, MAE 0.30646890, and R2 0.88841956.
+- The non-overlapping post-calibration segment contained 1,283 predictions:
+  RMSE 0.44549288, MAE 0.34432911, and R2 0.82825918.
+- The installed `neural-signal-predict` entry point also completed a short
+  spike-only, direct-mode replay from outside the checkout without loading
+  voltage targets. The renamed training parser accepted `--latent-dim` with
+  an explicit data directory. This was not a new full model-training run.
+- Input and checkpoint hashes matched the existing verifier; the checkpoint
+  and historical training summary were not rewritten. New prediction reports
+  use the `aligned_lstm` family and `latent_dynamics` backend.
+
+The dedicated test environment was removed after validation; generated
+results were retained outside the repository. The GPL-3.0-or-later license
+selection and module renaming do not constitute third-party rights clearance.

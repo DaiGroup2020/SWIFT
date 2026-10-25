@@ -29,3 +29,12 @@ Each project uses its own virtual environment and dependency lock file. Use a se
 ## Automated checks
 
 The [RAPID workflow](.github/workflows/rapid.yml) and [prediction workflow](.github/workflows/model-prediction.yml) run their respective data-free tests. Manually enabling `full_demo` also downloads the LFS assets, runs the selected complete demonstration, and verifies its outputs.
+
+## License
+
+The DaiGroup-owned software in both projects is licensed under GNU GPL version
+3 or, at your option, any later version (`GPL-3.0-or-later`). See [LICENSE](LICENSE)
+and the project notices: [RAPID](rapid/NOTICE), [prediction](model-prediction/NOTICE).
+Third-party dependencies retain their own licenses; this grant does not provide
+third-party patent rights. Method attribution is retained in the prediction
+project's [provenance record](model-prediction/docs/PROVENANCE.md).

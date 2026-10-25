@@ -77,5 +77,12 @@ in [deployment validation](docs/DEPLOYMENT_VALIDATION.md).
 
 ## Citation and license
 
-See [CITATION.cff](CITATION.cff) for citation metadata and [LICENSE](LICENSE)
-for the software license.
+This independent DaiGroup PyTorch implementation is informed by the latent
+dynamics alignment method of [Karpowicz et al. (2025)](https://doi.org/10.1038/s41467-025-59652-y).
+See [method attribution and provenance](docs/PROVENANCE.md) for the citation,
+implementation differences, and source and model records.
+
+The DaiGroup-owned software is licensed under GNU GPL version 3 or, at your
+option, any later version (`GPL-3.0-or-later`). See [LICENSE](LICENSE),
+[NOTICE](NOTICE), and [CITATION.cff](CITATION.cff). This license does not grant
+rights to third-party software or patents.

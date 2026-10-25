@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 """
-NoMAD-style latent dynamics alignment + encoded LSTM decoder for the M06 sessions.
+Latent-dynamics alignment and an encoded LSTM decoder for the M06 sessions.
 
 Hybrid pipeline:
 1. Read sparse spike timestamps from `Online_*.csv` and control voltages from `*_voltage.dat`.
@@ -60,8 +60,8 @@ from .manifold_decoder import (
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_DATA_DIR = SCRIPT_DIR / "data" / "data"
-DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "manifold_decoder_nomad_outputs"
-DEFAULT_MODEL_DIR = SCRIPT_DIR / "model_Nomad"
+DEFAULT_OUTPUT_DIR = SCRIPT_DIR / "aligned_decoder_outputs"
+DEFAULT_MODEL_DIR = SCRIPT_DIR / "aligned_models"
 
 USER_EDITABLE_SETTINGS: dict[str, object] = {
     "data_source": "data",
@@ -90,7 +90,7 @@ USER_EDITABLE_SETTINGS: dict[str, object] = {
         "2026-01-12",
         "2026-01-26",
     ],
-    "export_tag": "nomad",
+    "export_tag": "aligned",
 }
 
 
@@ -174,7 +174,7 @@ class Config:
     train_days: list[str] | None = None
     eval_days: list[str] | None = None
     day_time_end_s: dict[str, float] | None = None
-    export_tag: str = "nomad"
+    export_tag: str = "aligned"
     skip_model_export: bool = False
     latent_cache_output: Path | None = None
     build_latent_cache_only: bool = False
@@ -182,7 +182,7 @@ class Config:
     train_sample_stride_bins: int = 1
     window_ms: float = 780.0
     readin_dim: int = 64
-    nomad_latent_dim: int = 32
+    latent_dim: int = 32
     alignment_hidden_dim: int = 96
     alignment_batch_size: int = 256
     alignment_epochs: int = 18
@@ -360,7 +360,7 @@ class ReferenceDynamicsModel(nn.Module):
 
 
 def parse_args() -> Config:
-    parser = argparse.ArgumentParser(description="Train a NoMAD-style latent alignment + LSTM decoder.")
+    parser = argparse.ArgumentParser(description="Train a latent-dynamics alignment and LSTM decoder.")
     parser.add_argument(
         "--data-source",
         type=str,
@@ -393,7 +393,7 @@ def parse_args() -> Config:
     )
     parser.add_argument("--window-ms", type=float, default=780.0)
     parser.add_argument("--readin-dim", type=int, default=64)
-    parser.add_argument("--nomad-latent-dim", type=int, default=32)
+    parser.add_argument("--latent-dim", type=int, default=32)
     parser.add_argument("--alignment-hidden-dim", type=int, default=96)
     parser.add_argument("--alignment-batch-size", type=int, default=256)
     parser.add_argument("--alignment-epochs", type=int, default=18)
@@ -492,7 +492,7 @@ def parse_args() -> Config:
         train_sample_stride_bins=args.train_sample_stride_bins,
         window_ms=args.window_ms,
         readin_dim=args.readin_dim,
-        nomad_latent_dim=args.nomad_latent_dim,
+        latent_dim=args.latent_dim,
         alignment_hidden_dim=args.alignment_hidden_dim,
         alignment_batch_size=args.alignment_batch_size,
         alignment_epochs=args.alignment_epochs,
@@ -823,7 +823,7 @@ def train_reference_model(
     model = ReferenceDynamicsModel(
         input_dim=base_day.counts.shape[1],
         readin_dim=config.readin_dim,
-        latent_dim=config.nomad_latent_dim,
+        latent_dim=config.latent_dim,
         dropout=(config.reference_alignment_dropout if config.reference_alignment_dropout is not None else config.dropout),
         output_dim=Y_train.shape[1],
     ).to(config.device)
@@ -1198,7 +1198,7 @@ def write_aligned_latent_cache(
     base_input_normalization: dict[str, object] | None,
     day_adaptation_state_dicts: dict[str, dict[str, object]],
 ) -> None:
-    """Persist the once-trained NoMAD mapping for later LSTM-only CV searches."""
+    """Persist the once-trained session alignment mapping for later LSTM-only CV searches."""
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     base_day = days[config.base_day]
     cache_days: dict[str, dict[str, object]] = {}
@@ -1213,7 +1213,7 @@ def write_aligned_latent_cache(
             "alignment": json_ready(asdict(day.alignment)) if day.alignment is not None else None,
         }
     payload = {
-        "cache_format": "nomad_aligned_latent_v1",
+        "cache_format": "aligned_latent_v1",
         "created_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "source_config": json_ready(asdict(config)),
         "data_source_identifier": str(config.data_source or Path(config.data_dir).name),
@@ -1222,12 +1222,12 @@ def write_aligned_latent_cache(
         "selected_days": list(config.selected_days),
         "unit_cols": list(base_day.unit_cols),
         "target_columns": list(base_day.target_columns),
-        "latent_dim": int(config.nomad_latent_dim),
+        "latent_dim": int(config.latent_dim),
         "reference_model_state_dict": module_state_dict_cpu(reference_model),
         "reference_model_kwargs": {
             "input_dim": int(base_day.counts.shape[1]),
             "readin_dim": int(config.readin_dim),
-            "latent_dim": int(config.nomad_latent_dim),
+            "latent_dim": int(config.latent_dim),
             "dropout": float(config.reference_alignment_dropout if config.reference_alignment_dropout is not None else config.dropout),
             "output_dim": 2,
         },
@@ -1349,7 +1349,7 @@ def run_pipeline(config: Config) -> None:
         }
     }
 
-    print("\nFitting NoMAD-style day alignment networks:")
+    print("\nFitting Latent-dynamics day alignment networks:")
     for day_name in config.selected_days:
         if day_name == config.base_day:
             continue
@@ -1422,7 +1422,7 @@ def run_pipeline(config: Config) -> None:
     else:
         print("  eval: skipped (no eval_days configured)")
 
-    print("\nTraining encoded LSTM decoder on NoMAD-style aligned latents:")
+    print("\nTraining encoded LSTM decoder on Latent-dynamics aligned latents:")
     decoder_model, x_scaler, y_scaler, decoder_history = train_lstm_decoder(
         X_train=X["train"],
         Y_train=Y["train"],
@@ -1502,7 +1502,7 @@ def run_pipeline(config: Config) -> None:
 
     decoder_kwargs = {
         "decoder_variant": config.decoder_variant,
-        "input_dim": int(config.nomad_latent_dim),
+        "input_dim": int(config.latent_dim),
         "seq_len": int(seq_len),
         "time_dim": int(config.time_dim),
         "latent_embed_dim": int(config.latent_embed_dim),
@@ -1513,8 +1513,8 @@ def run_pipeline(config: Config) -> None:
         "use_bias": False,
     }
     checkpoint = {
-        "model_family": "nomad_lstm",
-        "model_backend": "nomad_style_dynamics",
+        "model_family": "aligned_lstm",
+        "model_backend": "latent_dynamics",
         "config": json_ready(asdict(config)),
         "data_source_identifier": str(config.data_source or Path(config.data_dir).name),
         "data_source_dir": str(config.data_dir.resolve()),
@@ -1523,7 +1523,7 @@ def run_pipeline(config: Config) -> None:
         "reference_model_kwargs": {
             "input_dim": int(base_day.counts.shape[1]),
             "readin_dim": int(config.readin_dim),
-            "latent_dim": int(config.nomad_latent_dim),
+            "latent_dim": int(config.latent_dim),
             "dropout": float(config.reference_alignment_dropout if config.reference_alignment_dropout is not None else config.dropout),
             "output_dim": 2,
         },
@@ -1558,8 +1558,8 @@ def run_pipeline(config: Config) -> None:
     torch.save(checkpoint, checkpoint_path)
 
     summary = {
-        "model_family": "nomad_lstm",
-        "model_backend": "nomad_style_dynamics",
+        "model_family": "aligned_lstm",
+        "model_backend": "latent_dynamics",
         "alignment_mode": "align_net_plus_observation_adapters",
         "config": json_ready(asdict(config)),
         "data_source_identifier": str(config.data_source or Path(config.data_dir).name),

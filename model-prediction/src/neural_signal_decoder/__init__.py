@@ -1,3 +1,3 @@
-"""NoMAD-style neural signal decoding tools."""
+"""Latent-dynamics alignment and neural signal decoding tools."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

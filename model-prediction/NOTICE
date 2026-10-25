@@ -1,0 +1,17 @@
+Neural Signal Prediction
+Copyright (C) 2026 DaiGroup
+SPDX-License-Identifier: GPL-3.0-or-later
+
+The DaiGroup-owned software in this project is free software: you can
+redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of
+the License, or (at your option) any later version.
+
+This software is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See LICENSE for the full terms.
+
+Third-party dependencies retain their own copyrights and licenses. This
+notice does not grant third-party software or patent rights, or replace
+separate permissions applicable to demonstration data or trained weights.
+Method references and source declarations are retained in docs/PROVENANCE.md.

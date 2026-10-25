@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-10-25
+
+- Selected GPL-3.0-or-later for DaiGroup-owned software and synchronized license metadata.
+- Retained the independent host-computer demo and its explicit FPGA implementation boundary.
 
 - Synchronized the external filter repair using an explicit cumulative `samples_seen` counter and added its large nonuniform-chunk regression test.
 - Added installed command-line entry points and 19 regression tests, including degenerate PCA and input/output protection.

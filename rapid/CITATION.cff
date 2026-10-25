@@ -1,9 +1,69 @@
+# Software contributors follow the manuscript's Author contributions.
 cff-version: 1.2.0
-message: "If you use this software, please cite the accompanying manuscript."
+message: "If you use this software, please cite the accompanying SWIFT manuscript below."
 title: "RAPID"
-version: "0.1.0"
-date-released: 2026-09-06
 type: software
-license: MIT
+version: "0.2.0"
+date-released: "2026-10-25"
+license: GPL-3.0-or-later
+repository-code: "https://github.com/DaiGroup2020/SWIFT"
+url: "https://github.com/DaiGroup2020/SWIFT/tree/main/rapid"
 authors:
-  - name: "Manuscript authors"
+  - family-names: "Wu"
+    given-names: "Shuying"
+  - family-names: "Xiong"
+    given-names: "Yuanqing"
+  - family-names: "He"
+    given-names: "Yi"
+  - family-names: "Li"
+    given-names: "Yinxuan"
+  - family-names: "Zhao"
+    given-names: "Xinyu"
+contact:
+  - family-names: "Gao"
+    given-names: "Teng"
+    email: "gaot@nanoctr.cn"
+    affiliation: "National Center for Nanoscience and Technology, Chinese Academy of Sciences"
+  - family-names: "Dai"
+    given-names: "Xiaochuan"
+    email: "xcdai@tsinghua.edu.cn"
+    affiliation: "School of Biomedical Engineering, Tsinghua Medicine, Tsinghua University"
+preferred-citation:
+  type: unpublished
+  title: "SWIFT: A plug-and-play wireless intracortical brain–computer interface"
+  authors:
+    - family-names: "Wu"
+      given-names: "Shuying"
+    - family-names: "Xiong"
+      given-names: "Yuanqing"
+    - family-names: "Fang"
+      given-names: "Tianyi"
+    - family-names: "He"
+      given-names: "Yi"
+    - family-names: "Li"
+      given-names: "Yinxuan"
+    - family-names: "Li"
+      given-names: "Siqi"
+    - family-names: "Li"
+      given-names: "Xiao"
+    - family-names: "Song"
+      given-names: "Jiatai"
+    - family-names: "Zhou"
+      given-names: "Yuyao"
+    - family-names: "Wang"
+      given-names: "Yida"
+    - family-names: "Zhao"
+      given-names: "Xinyu"
+    - family-names: "Jia"
+      given-names: "Xiaoxuan"
+    - family-names: "Wu"
+      given-names: "Jinsong"
+    - family-names: "Gao"
+      given-names: "Teng"
+    - family-names: "Dai"
+      given-names: "Xiaochuan"
+  year: 2026
+  notes: >-
+    Manuscript supplied by the authors; journal, DOI, and publication details
+    have not been provided. Shuying Wu, Yuanqing Xiong, Tianyi Fang, and Yi He
+    contributed equally. Correspondence: Teng Gao and Xiaochuan Dai.

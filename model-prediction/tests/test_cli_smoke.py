@@ -29,6 +29,16 @@ class CommandLineSmokeTests(unittest.TestCase):
     def test_prediction_command_is_exposed(self) -> None:
         self.run_help("scripts/predict_future_day.py")
 
+    def test_renamed_installed_modules_are_exposed(self) -> None:
+        for module in ("train_aligned_decoder", "predict_aligned_decoder"):
+            with self.subTest(module=module):
+                completed = subprocess.run(
+                    [sys.executable, "-m", f"neural_signal_decoder.{module}", "--help"],
+                    cwd=ROOT, text=True, capture_output=True, check=False,
+                )
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                self.assertIn("usage:", completed.stdout.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

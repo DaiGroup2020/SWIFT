@@ -3,6 +3,8 @@
 Run commands on this page from the `rapid/` project directory. From the SWIFT
 root directory, enter it with `cd rapid` first.
 
+This package runs a Python/NumPy/Numba software replay of the FPGA14 processing rules on the host computer. It does not execute on an FPGA board or invoke an RTL simulator. The measurements and checks below concern software execution; they do not measure FPGA performance or establish equivalence to a physical FPGA implementation.
+
 ## Tested environment and installation
 
 The demonstration was checked on 2026-09-07 in a new Windows 11 Pro environment (build 22631) with Python 3.10.11 and an Intel Core Ultra 9 285K CPU. Use the versions in `requirements-lock.txt`; the direct scientific dependencies are NumPy 2.0.2, Numba 0.60.0, scikit-learn 1.6.1, SpikeInterface 0.103.2, and Neo 0.14.3.
@@ -24,7 +26,7 @@ Dependency installation took 129.18 seconds in the tested environment. Download 
 Run these commands from the `rapid/` project directory:
 
 ```powershell
-python scripts/run_demo.py --results-root outputs/demo-60s
+python scripts/run_demo.py --results-root outputs/demo-60s --chunk-blocks 64
 python scripts/verify_demo.py --results-root outputs/demo-60s
 ```
 
@@ -73,7 +75,7 @@ These hashes also match the previous two full replays on 2026-09-06. Manifest cr
 
 The README demo entry point was also run for all 60 seconds with `--chunk-blocks 64` and without filtered-trace output. It completed in 40.06 seconds and produced the same two CSV hashes. The verification script passed for both runs: input checksums, main CSV hashes, manifest counts, all six per-channel/per-unit export folders, and optional trace sizes. Neither run used data or modules from the original development folder.
 
-Normal GitHub Actions runs perform the data-free tests. A manual `full_demo` run additionally downloads the LFS assets, executes the complete example, and verifies outputs. The workflow has been checked locally but has not yet been executed on GitHub.
+Normal GitHub Actions runs perform the data-free tests. The [RAPID CI run for commit f10bd651](https://github.com/DaiGroup2020/SWIFT/actions/runs/34048129154) passed on GitHub. A manual `full_demo` run additionally downloads the LFS assets, executes the complete example, and verifies outputs; that optional job was not run in this CI execution. The full-demo results above were obtained locally.
 
 ## Optional chunk-continuity check
 
@@ -84,3 +86,20 @@ The corresponding unit assignment contained 7,279 events across 493 nonempty uni
 ## Documentation references
 
 The short installation/demo/output layout follows examples such as [Kilosort4](https://github.com/MouseLand/Kilosort) (Nature Methods) and [speechBCI](https://github.com/fwillett/speechBCI) (Nature). Detailed descriptions are kept outside the README. [Nature's code publication guidance](https://www.nature.com/documents/GuidelinesCodePublication.pdf) informs the environment and run records; it does not prescribe a single README template.
+
+## Version 0.2.0 validation — 2026-10-25
+
+A new isolated Python 3.10.11 environment on Windows x64 (build 22631) was
+installed from the unchanged `requirements-lock.txt`. The package built and
+installed as `rapid-spike-sorting` 0.2.0; `pip check` and the installed CLI
+help passed. The distribution included both LICENSE and NOTICE.
+
+All 19 data-free tests passed. The full bundled 60-second recording was
+replayed with `--chunk-blocks 64`, and `scripts/verify_demo.py` passed all
+asset and output checks: 439,597 channel events, 439,597 unit assignments,
+191 channel export files and 591 unit export files. This remains a host
+software demonstration, not an FPGA execution or hardware-equivalence test.
+
+The dedicated test environment was removed after validation; generated
+results were retained outside the repository. The release uses
+GPL-3.0-or-later for DaiGroup-owned software.

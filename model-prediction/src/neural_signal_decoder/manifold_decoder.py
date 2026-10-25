@@ -578,7 +578,7 @@ class DirectLatentLSTMRegressor(nn.Module):
 
 def build_decoder_model_from_kwargs(kwargs: dict[str, object]) -> nn.Module:
     decoder_variant = str(kwargs.get("decoder_variant", "encoded")).strip().lower()
-    if decoder_variant in {"encoded", "v1", "nomad_lstm"}:
+    if decoder_variant in {"encoded", "v1", "aligned_lstm", "nomad_lstm"}:
         return EncodedLatentLSTMRegressor(
             input_dim=int(kwargs["input_dim"]),
             seq_len=int(kwargs["seq_len"]),
@@ -590,7 +590,7 @@ def build_decoder_model_from_kwargs(kwargs: dict[str, object]) -> nn.Module:
             output_dim=int(kwargs.get("output_dim", 2)),
             use_bias=bool(kwargs.get("use_bias", False)),
         )
-    if decoder_variant in {"v2", "direct", "nomad_lstm_v2"}:
+    if decoder_variant in {"v2", "direct", "aligned_lstm_v2", "nomad_lstm_v2"}:
         return DirectLatentLSTMRegressor(
             input_dim=int(kwargs["input_dim"]),
             seq_len=int(kwargs["seq_len"]),
