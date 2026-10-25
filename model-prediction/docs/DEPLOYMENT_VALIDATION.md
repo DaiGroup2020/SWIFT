@@ -1,12 +1,28 @@
-# Demo validation record
+# Prediction demonstration validation
 
-The runnable example uses the released checkpoint, the 240-second
-2026-02-02 spike CSV, and its matching voltage log. Calibration uses the first
-200 seconds of spikes only. All 213 checkpoint Unit identities are present.
+The example uses the released checkpoint, the 240-second spike CSV, and the
+matching voltage log. Calibration uses only the first 200 seconds of spikes.
+The detailed functionality and pseudocode are in
+[REPRODUCIBILITY.md](REPRODUCIBILITY.md#functional-description-and-pseudocode).
 
-## Current verification commands
+## Reference environment and timing
 
-Install the Python 3.10 locked environment described in the README, then run:
+The full demo was validated in an isolated Python 3.10.11 environment on
+Windows 11 Pro x64 (build 22631), using an Intel Core Ultra 9 285K and the
+unchanged [requirements-lock.txt](../requirements-lock.txt), including
+PyTorch 2.8.0+cpu, NumPy 2.1.3, pandas 2.3.3, Matplotlib 3.10.8, and
+scikit-learn 1.7.2. Package build/installation, `pip check`, and the installed
+command entry point passed; LICENSE and NOTICE were included in the package.
+
+Base dependency preparation took 112.35 seconds; installing the verified
+PyTorch wheel and project took another 28.23 seconds, excluding network
+transfer. Total measured preparation was 140.58 seconds. The CPU wheel is
+approximately 619 MB. A complete demo took 74.00 seconds on the tested
+desktop. Network time, processor and numerical libraries affect these values.
+
+## Generate and check the complete demo
+
+From `model-prediction/` after installation:
 
 ```powershell
 python -m unittest discover -s tests -v
@@ -14,112 +30,54 @@ python scripts/run_demo.py --device cpu --output-dir outputs/demo_prediction
 python scripts/verify_demo.py --output-dir outputs/demo_prediction
 ```
 
-Use a new output directory or `--overwrite` for a repeat run. The 16 data-free
-tests cover command availability, input identities, checkpoint loading,
-output protection, and evaluation boundaries. The full-demo verification
-checks the actual generated artifacts separately.
-
-The whole-replay score includes the calibration period. The separate
-`evaluation.post_calibration` score excludes all decoder windows whose first
-bin is at or before 200 seconds; it preserves causal recurrent history.
-
-## Validated stable environment — 2026-09-07
-
-A new isolated environment was created without access to system packages:
-Windows 11 Pro (build 22631), Python 3.10.11, Intel Core Ultra 9 285K,
-and PyTorch 2.8.0+cpu. All other exact versions are in `requirements-lock.txt`.
-Package installation, `pip check`, and all 16 regression tests passed.
-
-The full README demo completed in **74.00 seconds**, generating the CSV,
-summary, and PNG. All 213 input identities matched. The independent verifier
-passed input hashes, all 7,950 finite prediction/target rows, the time grid,
-summary consistency, whole-replay metrics, and post-calibration metrics.
+Use a new output directory or `--overwrite` for another run.
 
 | Evaluation interval | Rows | RMSE | MAE | R2 |
-|---|---:|---:|---:|---:|
-| Whole replay, endpoints 1.515–239.985 s | 7,950 | 0.398225541 | 0.306468904 | 0.888419564 |
-| Non-overlapping post-calibration windows, endpoints 201.525–239.985 s | 1,283 | 0.445492875 | 0.344329089 | 0.828259196 |
+| --- | ---: | ---: | ---: | ---: |
+| Whole replay, endpoints 1.515-239.985 s | 7,950 | 0.39822554 | 0.30646890 | 0.88841956 |
+| Non-overlapping post-calibration windows, endpoints 201.525-239.985 s | 1,283 | 0.44549288 | 0.34432911 | 0.82825918 |
 
-The verifier recalculates metrics from the exported CSV. Absolute/relative
-tolerances are `2e-6` for CSV-versus-summary checks and `1e-4` for reference
-metrics, allowing small differences between CPU math libraries. Exact hashes
-below document this run but are not required across platforms:
+All 213 unit identities match. The whole-replay score includes the calibration
+period and must not be described as a prospective post-calibration result.
+The separate future-window metric excludes decoder windows overlapping the
+calibration interval but retains continuous recurrent history.
 
-| Artifact | SHA-256 |
-|---|---|
-| `predictions_2026-02-02.csv` | `8B113826EC5B24DA0B362695414468BB7033DE2E60D3FE26F6506A2F9D40CD79` |
-| `predictions_2026-02-02.png` | `F68646AA42FAE99B7CCA4EE8367DA323DBD1556845EBE3DE7C3A1DECD5DC264D` |
+The verifier checks three input hashes, every prediction row and timestamp,
+summary/CSV consistency, expected metrics and the PNG signature. It uses
+tolerance `2e-6` for CSV-versus-summary metrics and `1e-4` for the reference
+scores; rendering and floating-point differences need not be byte-identical.
 
-The non-editably installed `neural-signal-predict` command was also tested
-outside the source checkout. A 10-second direct, spike-only smoke run produced
-283 predictions with no voltage input, reference columns, or evaluation score.
+## Included reference results
 
-Base dependency preparation took 112.35 seconds. Installing the verified
-PyTorch wheel and this project took a further 28.23 seconds, excluding network
-transfer. The CPU wheel is approximately 619 MB; download time depends on the
-connection, and the validation download required a retry. Runtime measurements
-are examples from this computer, not performance guarantees.
+The [reference directory](../outputs/reference/README.md) contains the full
+prediction CSV, summary JSON and PNG copied unchanged from the verified run.
+Check these included files with the standard library only:
 
-Normal GitHub Actions runs perform the data-free tests. The optional manual
-`full_demo` job additionally retrieves LFS data, runs the complete demo, and
-verifies outputs. The workflow was checked locally; it has not yet run on GitHub.
+```powershell
+python scripts/verify_demo.py --output-dir outputs/reference
+```
 
-## Comparison with the earlier local environment
+The complete generated demo and the committed reference files both passed
+independent verification on 2026-10-25. The frozen checkpoint remains
+unchanged (SHA-256
+`4f87529ee8250dab814387f77e72e2d349d70771f47cf31491a048836b2c3565`).
 
-The earlier local check used the previously installed nightly PyTorch
-environment, not the new stable PyTorch 2.8.0 CPU lock. Two runs produced
-7,950 predictions over the whole replay with these metrics:
+## Current checks and scope
 
-| RMSE | MAE | R2 |
-|---:|---:|---:|
-| 0.3982238945 | 0.3064672351 | 0.8884204930 |
+All 21 current data-free tests passed on 2026-10-25, including renamed-module
+help, current/legacy checkpoint tags, exact equivalence of decoder aliases,
+unit mapping, output protection and evaluation boundaries. This latest
+test-only rerun used the existing Python 3.10.11 desktop environment with the
+same NumPy/pandas/Matplotlib/scikit-learn versions above and PyTorch
+2.11.0.dev20251215+cu128. The published full reference results instead use the
+stable CPU lock above. No numerical model algorithm changed in this
+documentation/reference-output update.
 
-These metrics include decoded endpoints within the calibration interval and
-must not be labeled as post-calibration scores. Historical artifact hashes:
+The installed CLI also completed a short direct, spike-only check from
+outside the checkout without voltage targets. The training parser accepted
+`--latent-dim` with an explicit data directory; this was not a full retraining
+or independent audit of historical training.
 
-| Artifact | SHA-256 |
-|---|---|
-| `predictions_2026-02-02.csv` | `FBB977083078F531C85D963616DF4D0E83557586ACD0AD89C27471D1074FBE4D` |
-| `predictions_2026-02-02.png` | `E1DF777A22930F960EB69B9FC7F8DFC58A1E6CB9CF6734C8A2F088E27A81A91D` |
-
-These hashes document that earlier environment. Use the current demo reference
-and verification command for the locked environment rather than treating the
-historical image hash as a cross-platform requirement.
-
-The updated code was also rerun in that existing environment on 2026-09-07.
-It completed in 60.49 seconds and passed the independent demo verifier. The
-small differences from the stable environment are within its tolerance.
-
-## Earlier model-development results
-
-The original development notes recorded a 2026-02-02 offline score of
-RMSE 0.465512, MAE 0.343437, R2 0.840551 and a separate deployment run of
-RMSE 0.419830, MAE 0.326186, R2 0.870491. These used different alignment or
-recording settings. They are retained only as historical context and are not
-the expected results of the bundled demo.
-
-## Version 0.2.0 validation — 2026-10-25
-
-Validated on Windows x64 (build 22631) using a new isolated Python 3.10.11
-environment and the unchanged `requirements-lock.txt`, including PyTorch
-2.8.0+cpu. The package built and installed as `neural-signal-prediction` 0.2.0;
-`pip check` passed, and the distribution included both LICENSE and NOTICE.
-
-- All 21 data-free tests passed, including renamed-module help, current and
-  legacy checkpoint families, and identical outputs for current/legacy
-  decoder aliases restored from the same state dictionary.
-- The full 240-second demo and `scripts/verify_demo.py` passed: 7,950
-  predictions, RMSE 0.39822554, MAE 0.30646890, and R2 0.88841956.
-- The non-overlapping post-calibration segment contained 1,283 predictions:
-  RMSE 0.44549288, MAE 0.34432911, and R2 0.82825918.
-- The installed `neural-signal-predict` entry point also completed a short
-  spike-only, direct-mode replay from outside the checkout without loading
-  voltage targets. The renamed training parser accepted `--latent-dim` with
-  an explicit data directory. This was not a new full model-training run.
-- Input and checkpoint hashes matched the existing verifier; the checkpoint
-  and historical training summary were not rewritten. New prediction reports
-  use the `aligned_lstm` family and `latent_dynamics` backend.
-
-The dedicated test environment was removed after validation; generated
-results were retained outside the repository. The GPL-3.0-or-later license
-selection and module renaming do not constitute third-party rights clearance.
+No new test environment was created for the reference checks. Dedicated demo
+validation environments have been removed. The code and bundled assets use
+GPL-3.0-only; see [NOTICE](../NOTICE) and [asset licenses](../../ASSET_LICENSES.md).

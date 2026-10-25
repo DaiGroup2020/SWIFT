@@ -4,6 +4,16 @@ Run a pretrained neural decoder on the bundled 240-second example. The demo
 uses spike timestamps to calibrate the model and predicts two-dimensional
 velocity. It saves the predictions, an evaluation summary, and a figure.
 
+## System requirements
+
+- Tested on Windows 11 Pro, 64-bit (build 22631), Python 3.10.11, and an Intel
+  Core Ultra 9 285K. macOS and Linux have not been validated for this release.
+- Validated scientific dependencies: PyTorch 2.8.0+cpu, NumPy 2.1.3, pandas
+  2.3.3, Matplotlib 3.10.8, and scikit-learn 1.7.2. All exact dependency
+  versions are in [requirements-lock.txt](requirements-lock.txt).
+- No non-standard hardware, FPGA board, acquisition hardware, or dedicated
+  GPU is required for this recorded-data demo. Git LFS retrieves the assets.
+
 ## Install
 
 Use Python 3.10 and Git LFS. From the SWIFT root directory, enter this project
@@ -24,6 +34,11 @@ The locked environment includes CPU PyTorch so the example needs no dedicated
 GPU. For GPU use, install a compatible CUDA-enabled PyTorch build and select
 `--device cuda` when running the demo.
 
+Typical installation on the tested desktop took approximately 2-3 minutes
+(140.58 seconds), excluding package and data downloads. The CPU PyTorch
+wheel is approximately 619 MB; download speed can substantially increase
+setup time. See the [validation record](docs/DEPLOYMENT_VALIDATION.md).
+
 ## Run the example
 
 Run from the `model-prediction/` project directory:
@@ -35,6 +50,10 @@ python scripts/verify_demo.py --output-dir outputs/demo_prediction
 
 The first command uses the bundled checkpoint, spike CSV, and matching voltage
 log. The second checks the generated results against the demo reference.
+
+Expected runtime is approximately 74 seconds on the tested desktop using the
+locked CPU environment. This is an offline software replay, not a guarantee
+of online or hardware latency.
 
 Results are saved in `outputs/demo_prediction/`:
 
@@ -48,6 +67,11 @@ The demo calibrates using spikes from the first 200 seconds. Its 7,950 decoded
 rows cover the whole replay, including that period. The summary reports both
 whole-replay metrics and a separate post-calibration score that excludes
 decoder windows overlapping calibration.
+
+Precomputed, verified CSV/JSON/PNG examples are included in
+[outputs/reference](outputs/reference/README.md). Normal runs use
+`outputs/demo_prediction/`, leaving these reference files unchanged. You can
+check the included files with `python scripts/verify_demo.py --output-dir outputs/reference`.
 
 ## Run again or choose another output folder
 
@@ -82,7 +106,8 @@ dynamics alignment method of [Karpowicz et al. (2025)](https://doi.org/10.1038/s
 See [method attribution and provenance](docs/PROVENANCE.md) for the citation,
 implementation differences, and source and model records.
 
-The DaiGroup-owned software is licensed under GNU GPL version 3 or, at your
-option, any later version (`GPL-3.0-or-later`). See [LICENSE](LICENSE),
+The DaiGroup-owned software, demo data, pretrained weights, and reference
+outputs are licensed under GNU GPL version 3 only (`GPL-3.0-only`). See [LICENSE](LICENSE),
 [NOTICE](NOTICE), and [CITATION.cff](CITATION.cff). This license does not grant
-rights to third-party software or patents.
+rights to third-party software or patents. Covered assets are listed in the
+[asset license table](../ASSET_LICENSES.md).

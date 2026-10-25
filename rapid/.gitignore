@@ -20,6 +20,8 @@ Thumbs.db
 # Generated results and diagnostics
 outputs/*
 !outputs/README.md
+!outputs/reference/
+!outputs/reference/**
 results/
 audit_backups/
 *.stdout.log

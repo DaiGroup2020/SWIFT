@@ -35,3 +35,6 @@ models/*
 # Runtime artifacts (the directory itself is retained for documented outputs).
 outputs/*
 !outputs/.gitkeep
+!outputs/README.md
+!outputs/reference/
+!outputs/reference/**

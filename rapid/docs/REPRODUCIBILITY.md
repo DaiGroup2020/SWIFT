@@ -1,105 +1,79 @@
-# Demonstration reproducibility
+# RAPID demonstration validation
 
-Run commands on this page from the `rapid/` project directory. From the SWIFT
-root directory, enter it with `cd rapid` first.
+This page records validation of the currently distributed software replay and
+its included reference outputs. Detailed functionality and pseudocode are in
+[METHODS.md](METHODS.md).
 
-This package runs a Python/NumPy/Numba software replay of the FPGA14 processing rules on the host computer. It does not execute on an FPGA board or invoke an RTL simulator. The measurements and checks below concern software execution; they do not measure FPGA performance or establish equivalence to a physical FPGA implementation.
+## Reference environment and installation
 
-## Tested environment and installation
+The full 60-second demo was validated on Windows 11 Pro x64 (build 22631),
+Python 3.10.11, and an Intel Core Ultra 9 285K. The isolated environment used
+the versions in [requirements-lock.txt](../requirements-lock.txt): NumPy 2.0.2,
+Numba 0.60.0, scikit-learn 1.6.1, SpikeInterface 0.103.2, and Neo 0.14.3.
+Package installation, dependency checks, and installed command help passed.
 
-The demonstration was checked on 2026-09-07 in a new Windows 11 Pro environment (build 22631) with Python 3.10.11 and an Intel Core Ultra 9 285K CPU. Use the versions in `requirements-lock.txt`; the direct scientific dependencies are NumPy 2.0.2, Numba 0.60.0, scikit-learn 1.6.1, SpikeInterface 0.103.2, and Neo 0.14.3.
+Dependency installation took approximately 129.18 seconds, excluding input
+downloads. A complete software replay with `--chunk-blocks 64` took 40.06
+seconds on the tested desktop. These timings are examples, not hardware
+throughput or performance guarantees. No FPGA board, GPU or acquisition
+hardware is required; FPGA HDL, build projects and bitstreams are not included.
 
-Follow the installation commands in the [README](../README.md), then run:
+## Generate the complete outputs
+
+From `rapid/` after installation:
 
 ```powershell
-python -m pip check
-python -m rapid check-env
 python -m unittest discover -s tests -v
-```
-
-All 19 tests passed. They cover filter continuity across unequal chunks, direct interval assignment, portable manifests, recoverable output replacement, input protection, PCA edge cases, duplicate session names, and command-line entry points. These tests use synthetic fixtures and the small included reference map; they do not read the demonstration RHD.
-
-Dependency installation took 129.18 seconds in the tested environment. Download speed, package caches, and hardware affect installation time.
-
-## Full demonstration
-
-Run these commands from the `rapid/` project directory:
-
-```powershell
 python scripts/run_demo.py --results-root outputs/demo-60s --chunk-blocks 64
 python scripts/verify_demo.py --results-root outputs/demo-60s
 ```
 
-The demo reads the included RHD, channel configuration, and reference map. It generates channel events and direct unit assignments under the requested output directory. Add `--write-band-dat` to also save the filtered waveform traces.
+The complete demo produces:
 
-Existing result directories are rejected by default. With `--overwrite`, each old result directory is renamed to a sibling `.backup-<UUID>` directory before replacement. Inputs must remain separate from outputs. The optional PCA and RHD clipping commands likewise preserve existing artifacts when explicit replacement is requested.
+| Check | Expected result |
+| --- | --- |
+| Detected channel events | 439,597 |
+| Assigned unit events | 439,597 |
+| Enabled channels / files per channel export | 191 |
+| Catalogue units / files per unit export | 591 |
+| Nonempty assigned units | 575 |
+| Source RHD SHA-256 | `89b7a7b796dcfcec18c999f416cf9179abfbb60820cf88121e66fa367d3efd8c` |
+| Channel CSV SHA-256 | `c3235272b0a88100daedc2b95113380a87262c3e90682e282cd3de565560374e` |
+| Unit CSV SHA-256 | `6c2b2046e414384557afe6094d368a6836026db2a6840c12ee54f6e8a0cee71a` |
 
-## Independently installed command
+The independent verifier checks input fingerprints, main event tables,
+manifests and all three per-channel/per-unit timestamp exports. Filtered
+traces are not written by default; `--write-band-dat` adds them.
 
-The package also supplies `rapid` and `python -m rapid`. Their output paths default to the current working directory. The source-checkout command `python rapid.py` remains available.
+## Included compact reference
 
-The 2026-09-07 validation used the installed package from outside the checkout and ran the equivalent `all-days` command against the bundled data, with `--chunk-blocks 256` and filtered-trace output enabled. It completed the full 60 seconds in 43.8 seconds on the test CPU, including channel detection and unit assignment. This is a measured example, not a runtime guarantee.
-
-For example, from the `rapid/` project directory:
+The main CSVs and manifests are committed in
+[outputs/reference](../outputs/reference/README.md). Fetch their large CSVs
+using Git LFS and check them independently:
 
 ```powershell
-python -m rapid all-days --input-root data --channel-param data/ChannelParam_20260129.json --model models/fpga14_local_peak_no_boundary_tmpl0129.csv --results-root outputs/all-days --chunk-blocks 256
+python scripts/verify_demo.py --reference-only --results-root outputs/reference
 ```
 
-This command saves filtered traces by default; add `--no-band-dat` to omit them. Each recording must have a distinct filename stem.
+This mode checks assets and the exact main CSV/manifest values. It explicitly
+does not claim to check omitted per-channel/per-unit exports. A full raw
+result tree and this compact reference both passed their respective verifiers
+on 2026-10-25.
 
-## Reference results
+## Current checks and scope
 
-The full replay produced the following results, confirmed from the generated manifests and CSV files:
+All 22 current data-free tests passed on 2026-10-25, including the three compact
+reference checks, filter chunk continuity, quantization, map assignment, input
+protection, degenerate PCA, and command help. This latest test-only rerun used
+the existing Python 3.10.11 desktop environment (NumPy 2.1.3, Numba 0.65.1 and
+scikit-learn 1.7.2); the recorded full reference run used the separate locked
+environment above. No numerical processing algorithm changed in this
+documentation/reference-output update.
 
-| Result | Expected value |
-| --- | ---: |
-| Recording duration | 60 seconds |
-| Enabled channels | 191 |
-| Channel events | 439,597 |
-| Unit assignments | 439,597 |
-| Units in the catalogue | 591 |
-| Nonempty units | 575 |
+No new test environment was created for the reference checks. Dedicated demo
+validation environments have been removed. Generated full outputs remain
+outside the repository; normal user runs are ignored by Git.
 
-The event CSV SHA-256 digests are:
-
-```text
-channel_spikes.csv
-C3235272B0A88100DAEDC2B95113380A87262C3E90682E282CD3DE565560374E
-
-unit_spikes.csv
-6C2B2046E414384557AFE6094D368A6836026DB2A6840C12EE54F6E8A0CEE71A
-```
-
-These hashes also match the previous two full replays on 2026-09-06. Manifest creation timestamps vary between runs and are not expected to be byte-identical.
-
-The README demo entry point was also run for all 60 seconds with `--chunk-blocks 64` and without filtered-trace output. It completed in 40.06 seconds and produced the same two CSV hashes. The verification script passed for both runs: input checksums, main CSV hashes, manifest counts, all six per-channel/per-unit export folders, and optional trace sizes. Neither run used data or modules from the original development folder.
-
-Normal GitHub Actions runs perform the data-free tests. The [RAPID CI run for commit f10bd651](https://github.com/DaiGroup2020/SWIFT/actions/runs/34048129154) passed on GitHub. A manual `full_demo` run additionally downloads the LFS assets, executes the complete example, and verifies outputs; that optional job was not run in this CI execution. The full-demo results above were obtained locally.
-
-## Optional chunk-continuity check
-
-An earlier 0.9984-second clipped replay produced 7,279 channel events with both `--chunk-blocks 1` and `--chunk-blocks 64`. The channel CSV files were byte-identical, with SHA-256 `625A17EED45B8997CCCAD639B9AD4E7BE44D34EA7BBDD18FBD9183210B32D108`.
-
-The corresponding unit assignment contained 7,279 events across 493 nonempty units, with CSV SHA-256 `03969B4E5F0B974DDDF008CD6E5468BA8915D72090242D21CDBE5DCB2E947F90`. The test suite also checks the synchronized 191-channel, 65,537-sample nonuniform filter regression.
-
-## Documentation references
-
-The short installation/demo/output layout follows examples such as [Kilosort4](https://github.com/MouseLand/Kilosort) (Nature Methods) and [speechBCI](https://github.com/fwillett/speechBCI) (Nature). Detailed descriptions are kept outside the README. [Nature's code publication guidance](https://www.nature.com/documents/GuidelinesCodePublication.pdf) informs the environment and run records; it does not prescribe a single README template.
-
-## Version 0.2.0 validation — 2026-10-25
-
-A new isolated Python 3.10.11 environment on Windows x64 (build 22631) was
-installed from the unchanged `requirements-lock.txt`. The package built and
-installed as `rapid-spike-sorting` 0.2.0; `pip check` and the installed CLI
-help passed. The distribution included both LICENSE and NOTICE.
-
-All 19 data-free tests passed. The full bundled 60-second recording was
-replayed with `--chunk-blocks 64`, and `scripts/verify_demo.py` passed all
-asset and output checks: 439,597 channel events, 439,597 unit assignments,
-191 channel export files and 591 unit export files. This remains a host
-software demonstration, not an FPGA execution or hardware-equivalence test.
-
-The dedicated test environment was removed after validation; generated
-results were retained outside the repository. The release uses
-GPL-3.0-or-later for DaiGroup-owned software.
+This is a software demonstration, not FPGA validation or full reproduction
+of all manuscript results. The current code and bundled assets use
+GPL-3.0-only; see [NOTICE](../NOTICE) and [asset licenses](../../ASSET_LICENSES.md).

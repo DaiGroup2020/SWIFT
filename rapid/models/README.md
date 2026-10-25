@@ -15,3 +15,7 @@ DD7B69BDC08EFE9ABE9F7A2B48DD511C0B6133C8DA6B6429525582CA5A16D984
 ```
 
 The demo loads this map directly; no model fitting is required. Interval conventions and the optional PCA command are explained in [docs/METHODS.md](../docs/METHODS.md).
+
+The reference map is licensed under GNU GPL version 3 only (GPL-3.0-only).
+See [NOTICE](../NOTICE), [LICENSE](../LICENSE), and the
+[asset license table](../../ASSET_LICENSES.md).

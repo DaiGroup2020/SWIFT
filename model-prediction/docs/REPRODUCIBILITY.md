@@ -23,7 +23,53 @@ with `--output-dir`. Generated files are described in the README. The input
 checkpoint, spike CSV, and voltage log are Git LFS assets; run `git lfs pull`
 if they have not been downloaded.
 
-## What the demo computes
+## Functional description and pseudocode
+
+This section describes the prediction code's actual operations and is the
+repository location supplied in the submission checklist. It is a software
+description, not a claim that this text appears in the manuscript.
+
+### Inputs and fixed model
+
+The input is a sparse CSV of identified spike timestamps. Columns are matched
+to the checkpoint's 213 named units and ordered accordingly; missing names
+are rejected unless an explicit override is requested. The checkpoint contains
+the reference dynamics, decoder, saved scalers, and reference latent mean and
+covariance. Its weights are not retrained or overwritten by the demo.
+
+The reference model has a linear read-in, layer normalization, a unidirectional
+GRU, latent normalization, a positive firing-rate reconstruction head, and a
+behavior head used during reference-model training. The released latent
+dimension is 176. The separate encoded decoder applies learned time and latent
+projections to a latent window, followed by two LSTM layers (hidden size 144),
+normalization, and a two-dimensional regression head. Its released dropout
+setting is 0.15. See the [model card](../models/top64_local_peak/MODEL_CARD.md).
+
+### Spike-only session calibration
+
+The first 200 seconds of spikes define the default calibration interval.
+Per-unit normalization statistics are estimated from those spikes; the
+Gaussian smoothing setting is used to estimate these statistics, not to load
+future voltage targets. Each model input is normalized using the fitted
+statistics. The reference dynamics and saved behavior decoder remain fixed.
+
+A residual alignment network and copies of the observation read-in and rate
+head are adapted with AdamW. The minimized objective is a weighted sum of:
+
+1. Poisson reconstruction loss on raw spike counts, implemented as the mean
+   of `rate - count * log(rate)` after clamping positive rates.
+2. Multivariate Gaussian KL divergence from the current latent mean/covariance
+   to the saved reference statistics, with covariance regularization.
+3. An identity penalty, the mean squared change from normalized input to
+   aligned input.
+
+No voltage or behavior labels enter this calibration loss. The random seed is
+42, and the epoch limit, learning rate, weights, dropout, gradient clipping,
+and early-stopping settings are read from checkpoint metadata. The best
+calibration state is used only for that run. `--no-daily-calibration` bypasses
+session adaptation and uses the saved shared dynamics directly.
+
+### Continuous decoding and evaluation
 
 The model bins 213 identified spike trains into 30 ms intervals. It fits a
 session-specific alignment using only spikes in the first 200 seconds, then
@@ -50,6 +96,50 @@ records its selected prediction count and first/last endpoint times.
 windows crossing 200 seconds. The separate post-calibration summary continues
 to apply the stricter rule. `--skip-evaluation` skips all target loading and
 writes predictions without reference columns or scores.
+
+### Demo pseudocode
+
+```text
+load checkpoint, reference model, encoded decoder, scalers and reference statistics
+validate the spike CSV and match its unit names to checkpoint order
+bin spike timestamps into 30-ms count vectors
+select count vectors in the spike-only calibration interval
+freeze the saved reference model and decoder
+fit session alignment, read-in and rate-head copies using spike-only losses
+encode the full count sequence, preserving GRU state across processing chunks
+scale latents and build 51-bin windows ending at each prediction time
+run the fixed encoded LSTM decoder and undo output scaling
+apply any requested output-time limits and save velocity predictions
+if evaluation is enabled:
+    load matching voltage targets only after prediction
+    interpolate within target coverage; do not extrapolate missing targets
+    score the whole replay and the non-overlapping post-calibration windows separately
+save the prediction CSV, input hashes, settings, summary and plot
+```
+
+The full session is an offline replay. In particular, the fitted calibration
+is also applied when replaying its initial 200-second interval; whole-replay
+scores must not be described as a prospective online test.
+
+### Source locations and optional training
+
+- [predict_aligned_decoder.py](../src/neural_signal_decoder/predict_aligned_decoder.py):
+  checkpoint loading, calibration, prediction, output and evaluation boundaries.
+- [train_aligned_decoder.py](../src/neural_signal_decoder/train_aligned_decoder.py):
+  model definitions, spike-count windows, normalization, reconstruction/KL losses,
+  session adaptation and continuous latent encoding.
+- [manifold_decoder.py](../src/neural_signal_decoder/manifold_decoder.py):
+  the encoded LSTM, scaling and shared regression utilities.
+- [verify_demo.py](../scripts/verify_demo.py): independent input-hash and
+  output checks.
+
+The optional training module first fits reference dynamics using spike
+reconstruction and supervised behavior loss, adapts other sessions using
+spikes, then trains an encoded LSTM on aligned latents and paired targets.
+It requires compatible paired training recordings. The supplied demonstration
+loads self-trained weights; it does not retrain the checkpoint or reproduce
+all historical multi-session results. Method inspiration and implementation
+differences are recorded in [PROVENANCE.md](PROVENANCE.md).
 
 ## Configuration and another compatible recording
 

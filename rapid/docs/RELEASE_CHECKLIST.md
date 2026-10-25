@@ -1,6 +1,6 @@
 # Release checklist
 
-- [x] Set the software copyright holder and package author to `DaiGroup` and the software license to `GPL-3.0-or-later`; retain LICENSE and NOTICE, and record named software contributors and manuscript authors in `CITATION.cff`.
+- [x] Set the copyright holder and package author to `DaiGroup` and the software and bundled-asset license to `GPL-3.0-only`; retain LICENSE and NOTICE, and record named software contributors and manuscript authors in `CITATION.cff`.
 - [x] Add the GitHub repository URL, manuscript title, author order, and correspondence details to `CITATION.cff`.
 - [ ] Add final publication details and manuscript/archival identifiers to `CITATION.cff` when available.
 - [ ] Run `git lfs install` and verify that the demonstration RHD is managed by LFS.

@@ -1,3 +1,3 @@
 """RAPID: standalone RHD channel- and unit-based spike sorting."""
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"

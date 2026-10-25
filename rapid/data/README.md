@@ -19,3 +19,7 @@ Get-FileHash .\data\M06_20260129_L_260129_161328_60s.rhd -Algorithm SHA256
 ```
 
 The [main README](../README.md) shows how to run the demonstration. Generated results go to the chosen output directory.
+
+The bundled recording and channel parameters are licensed under GNU GPL
+version 3 only (GPL-3.0-only). See [NOTICE](../NOTICE), [LICENSE](../LICENSE),
+and the [asset license table](../../ASSET_LICENSES.md).

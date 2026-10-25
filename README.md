@@ -32,9 +32,17 @@ The [RAPID workflow](.github/workflows/rapid.yml) and [prediction workflow](.git
 
 ## License
 
-The DaiGroup-owned software in both projects is licensed under GNU GPL version
-3 or, at your option, any later version (`GPL-3.0-or-later`). See [LICENSE](LICENSE)
+The DaiGroup-owned software and bundled demonstration assets in both projects
+are licensed under GNU GPL version 3 only (`GPL-3.0-only`). See [LICENSE](LICENSE)
 and the project notices: [RAPID](rapid/NOTICE), [prediction](model-prediction/NOTICE).
 Third-party dependencies retain their own licenses; this grant does not provide
 third-party patent rights. Method attribution is retained in the prediction
 project's [provenance record](model-prediction/docs/PROVENANCE.md).
+
+The [asset license table](ASSET_LICENSES.md) identifies the bundled data,
+reference map, weights, and reference outputs covered by this release.
+See the [submission checklist map](CODE_SUBMISSION_CHECKLIST.md) for the
+documentation corresponding to each checklist item. Verified example results
+are included separately in [RAPID outputs](rapid/outputs/README.md) and
+[prediction outputs](model-prediction/outputs/README.md); normal demo runs do
+not overwrite these reference files.

@@ -59,6 +59,12 @@ unit/M06_20260129_L_260129_161328_60s/
 
 The two CSV files contain the detected events and their unit assignments. The per-channel and per-unit folders contain event times; manifests record the inputs and settings.
 
+Precomputed main event CSVs and manifests are included in
+[outputs/reference](outputs/reference/README.md). They are a compact reference,
+not the complete per-channel/per-unit export tree. Normal runs write to
+`outputs/demo-60s/`, leaving the reference files unchanged. Check the included
+reference files with `python scripts/verify_demo.py --reference-only --results-root outputs/reference`.
+
 Add `--write-band-dat` to the demo command to save filtered traces. To repeat a run in the same location, add `--overwrite`; existing result directories are retained beside the new results as `.backup-<UUID>` folders.
 
 ## Use your own recording
@@ -73,4 +79,4 @@ Channel identifiers, enabled channels, thresholds, and reference-map intervals m
 
 ## License and further information
 
-The DaiGroup-owned software is licensed under GNU GPL version 3 or, at your option, any later version (`GPL-3.0-or-later`); see [LICENSE](LICENSE) and [NOTICE](NOTICE). Third-party software retains its own licensing terms. See [CITATION.cff](CITATION.cff) for citation metadata, the [demonstration validation record](docs/REPRODUCIBILITY.md) for measured results, and [method details](docs/METHODS.md) for the processing steps.
+The DaiGroup-owned software, bundled demo data, channel parameters, reference map, and reference outputs are licensed under GNU GPL version 3 only (`GPL-3.0-only`); see [LICENSE](LICENSE), [NOTICE](NOTICE), and the [asset license table](../ASSET_LICENSES.md). Third-party software retains its own licensing terms. See [CITATION.cff](CITATION.cff) for citation metadata, the [demonstration validation record](docs/REPRODUCIBILITY.md) for measured results, and [method details](docs/METHODS.md) for the processing steps.

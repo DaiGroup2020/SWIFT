@@ -44,10 +44,10 @@ Dependency names here identify runtime libraries, not bundled third-party
 source code or a completed dependency-license audit. Exact tested package
 versions are in [requirements-lock.txt](../requirements-lock.txt).
 
-Before version 0.2.0, local filenames and checkpoint metadata included
-historical identifiers such as `nomad_lstm` and `nomad_style_dynamics`.
-Version 0.2.0 uses `train_aligned_decoder.py` and `predict_aligned_decoder.py`
-for the public modules and neutral identifiers for new exports. The released
+The public modules are `train_aligned_decoder.py` and
+`predict_aligned_decoder.py`, with neutral identifiers for new exports. The
+checkpoint contains historical training tags such as `nomad_lstm` and
+`nomad_style_dynamics`. The released
 checkpoint and its historical training summary are unchanged; legacy family
 and decoder tags remain accepted for compatibility. These identifiers and
 their renaming do not establish code origin or change third-party rights.
@@ -63,6 +63,6 @@ input provenance, and the applicable asset permissions should be retained as
 described in [PROVENANCE.md](PROVENANCE.md).
 
 The source comparison above did not change the model architecture or
-checkpoint. The subsequent 0.2.0 release renamed the modules and selected
-GPL-3.0-or-later for DaiGroup-owned software; this is not a new source-origin
-or patent-clearance determination.
+checkpoint. The current release uses GPL-3.0-only for DaiGroup-owned source
+and bundled assets. The selected license and descriptive module names are
+not a source-origin or patent-clearance determination.

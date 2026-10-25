@@ -1,16 +1,17 @@
 RAPID
 Copyright (C) 2026 DaiGroup
-SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-License-Identifier: GPL-3.0-only
 
-The DaiGroup-owned software in this project is free software: you can
+The DaiGroup-owned software and bundled assets in this project are provided
+under GNU GPL version 3 only. You can
 redistribute it and/or modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation, either version 3 of
-the License, or (at your option) any later version.
+License as published by the Free Software Foundation, version 3 only.
 
 This software is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 FITNESS FOR A PARTICULAR PURPOSE. See LICENSE for the full terms.
 
 Third-party dependencies retain their own copyrights and licenses. This
-notice does not replace separate permissions applicable to demonstration
-recordings or other assets, or grant third-party patent rights.
+notice does not grant third-party patent rights. The current release's
+covered demonstration data, parameters, reference map, and outputs are listed
+in ../ASSET_LICENSES.md.

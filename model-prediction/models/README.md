@@ -10,3 +10,7 @@ multi-session scores are separate from the results produced by this demo.
 Historical local path strings inside the frozen checkpoint are unused
 provenance metadata; prediction uses the input and output paths supplied at
 runtime.
+
+The bundled self-trained weights and their training metadata are licensed
+under GNU GPL version 3 only (GPL-3.0-only). See [NOTICE](../NOTICE),
+[LICENSE](../LICENSE), and the [asset license table](../../ASSET_LICENSES.md).

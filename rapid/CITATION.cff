@@ -3,9 +3,9 @@ cff-version: 1.2.0
 message: "If you use this software, please cite the accompanying SWIFT manuscript below."
 title: "RAPID"
 type: software
-version: "0.2.0"
+version: "0.2.1"
 date-released: "2026-10-25"
-license: GPL-3.0-or-later
+license: GPL-3.0-only
 repository-code: "https://github.com/DaiGroup2020/SWIFT"
 url: "https://github.com/DaiGroup2020/SWIFT/tree/main/rapid"
 authors:

@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "neural-signal-prediction"
-version = "0.2.0"
+version = "0.2.1"
 description = "Prediction-only neural signal decoder release"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [{ name = "DaiGroup" }]
 classifiers = [
-  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 ]
 dependencies = [
   "numpy>=1.24",
@@ -23,6 +23,9 @@ dependencies = [
 
 [project.scripts]
 neural-signal-predict = "neural_signal_decoder.predict_aligned_decoder:main"
+
+[tool.setuptools]
+license-files = ["LICENSE", "NOTICE"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

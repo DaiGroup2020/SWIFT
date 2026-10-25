@@ -60,10 +60,10 @@ assert that missing historical records or asset permissions have been supplied.
 
 ## Licensing status
 
-On 2026-10-25 the project authors selected GNU GPL version 3 or, at the user's
-option, any later version (`GPL-3.0-or-later`) for the DaiGroup-owned software;
-see [LICENSE](../LICENSE) and [NOTICE](../NOTICE). This selection does not claim
+Version 0.2.1 uses GNU GPL version 3 only (`GPL-3.0-only`), as selected by the
+project owner for the DaiGroup-owned software and bundled assets. See
+[LICENSE](../LICENSE), [NOTICE](../NOTICE), and the
+[asset license table](../../ASSET_LICENSES.md). This selection does not claim
 a license from the NoMAD rights holders or a completed patent review. Academic
 citation, renaming, and a statement of independent implementation do not
-themselves grant third-party rights. Dependency licenses and separate asset
-permissions remain applicable.
+themselves grant third-party rights. Dependencies retain their own licenses.

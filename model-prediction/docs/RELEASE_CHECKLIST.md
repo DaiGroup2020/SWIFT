@@ -4,7 +4,7 @@ Use this checklist before publishing a tagged GitHub release or creating an
 external archival deposit.
 
 1. The software copyright holder and package author are DaiGroup. The selected
-   software license is GPL-3.0-or-later; retain LICENSE and NOTICE. CITATION.cff
+   software and bundled-asset license is GPL-3.0-only; retain LICENSE and NOTICE. CITATION.cff
    records named software contributors, the manuscript authors and title,
    correspondence details, and the repository URL. Add final publication
    details and DOI when available.

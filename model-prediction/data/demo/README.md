@@ -15,3 +15,7 @@ The `top64` name identifies the upstream channel selection. The released
 decoder expects all 213 Unit identities in this CSV. Run with
 `--skip-evaluation` to omit the voltage file, and use `--overwrite` or another
 output directory when repeating the example.
+
+The bundled spike timestamps and voltage targets are licensed under GNU GPL
+version 3 only (GPL-3.0-only). See [NOTICE](../../NOTICE),
+[LICENSE](../../LICENSE), and the [asset license table](../../../ASSET_LICENSES.md).

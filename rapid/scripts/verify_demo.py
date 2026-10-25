@@ -79,13 +79,38 @@ def verify(results_root: Path | None) -> dict:
     return report
 
 
+def verify_reference(results_root: Path) -> dict:
+    """Check the compact main tables without claiming a full export-tree check."""
+    report = verify(None)
+    report["scope"] = "compact_reference_only"
+    for kind in ("channel", "unit"):
+        require(sha256(results_root / f"{kind}_spikes.csv") == OUTPUT_HASHES[kind],
+                f"Unexpected {kind} reference CSV")
+        manifest = json.loads((results_root / f"{kind}_manifest.json").read_text(encoding="utf-8"))
+        count_key = "detected_event_count" if kind == "channel" else "assigned_event_count"
+        require(manifest[count_key] == 439597, f"Incorrect {kind} reference event count")
+        require(manifest["source_fingerprint"] == ASSETS[f"data/{STEM}.rhd"],
+                f"Incorrect {kind} reference input fingerprint")
+        if kind == "channel":
+            require(manifest["enabled_channel_count"] == 191, "Incorrect reference channel count")
+        else:
+            require(manifest["catalog_unit_count"] == 591, "Incorrect reference unit catalogue count")
+            require(manifest["nonempty_assigned_unit_count"] == 575, "Incorrect reference nonempty unit count")
+        report[kind] = {"events": 439597, "csv_sha256": OUTPUT_HASHES[kind], "status": "PASS"}
+    return report
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results-root", type=Path, default=ROOT / "outputs" / "demo-60s")
-    parser.add_argument("--assets-only", action="store_true")
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--assets-only", action="store_true")
+    modes.add_argument("--reference-only", action="store_true",
+                       help="Check compact reference CSVs/manifests, not the complete export tree; use --results-root outputs/reference.")
     args = parser.parse_args()
     try:
-        print(json.dumps(verify(None if args.assets_only else args.results_root), indent=2))
+        report = verify_reference(args.results_root) if args.reference_only else verify(None if args.assets_only else args.results_root)
+        print(json.dumps(report, indent=2))
     except (OSError, ValueError, KeyError, TypeError) as exc:
         parser.exit(1, f"Demo verification FAILED: {exc}\n")
     return 0

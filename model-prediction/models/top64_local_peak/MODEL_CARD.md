@@ -9,6 +9,10 @@ The project authors confirm that the bundled weights were trained by their
 team. The retained configuration and scores below document the local training
 record; this declaration does not constitute a new independent training run.
 
+The released checkpoint and training metadata are licensed under GNU GPL
+version 3 only (GPL-3.0-only); see [NOTICE](../../NOTICE) and
+[LICENSE](../../LICENSE). This release does not grant third-party patent rights.
+
 ## Checkpoint
 
 | Property | Value |
