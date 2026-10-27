@@ -72,9 +72,30 @@ DEFAULT_MODEL_DIR = SCRIPT_DIR / "aligned_models"
 PREDICT_ALIGNMENT_SEED = 42
 
 
-def is_supported_checkpoint_family(model_family: object) -> bool:
-    """Accept the current family and the unchanged released checkpoint's legacy tag."""
-    return model_family in ("aligned_lstm", "nomad_lstm")
+def is_supported_alignment_checkpoint(checkpoint: object) -> bool:
+    """Check reconstructible model structure, not descriptive family tags."""
+    if not isinstance(checkpoint, dict):
+        return False
+    required = {"reference_model_kwargs", "reference_model_state_dict", "config",
+                "unit_cols", "x_mean", "x_std", "y_mean", "y_std"}
+    if not required.issubset(checkpoint):
+        return False
+    reference_kwargs = checkpoint["reference_model_kwargs"]
+    reference_state = checkpoint["reference_model_state_dict"]
+    decoder_kwargs = checkpoint.get("decoder_kwargs", checkpoint.get("model_kwargs"))
+    decoder_state = checkpoint.get("decoder_state_dict", checkpoint.get("model_state_dict"))
+    if not all(isinstance(value, dict) for value in
+               (reference_kwargs, reference_state, decoder_kwargs, decoder_state, checkpoint["config"])):
+        return False
+    if not isinstance(checkpoint["unit_cols"], (list, tuple)) or not checkpoint["unit_cols"]:
+        return False
+    return (
+        {"input_dim", "readin_dim", "latent_dim", "dropout"}.issubset(reference_kwargs)
+        and {"readin.weight", "gru.weight_ih_l0", "rate_head.0.weight"}.issubset(reference_state)
+        and {"input_dim", "seq_len", "hidden_dim", "num_layers", "dropout"}.issubset(decoder_kwargs)
+        and {"lstm.weight_ih_l0", "head.0.weight"}.issubset(decoder_state)
+        and "bin_size_s" in checkpoint["config"]
+    )
 
 USER_EDITABLE_SETTINGS: dict[str, object] = {
     "model_path": "",
@@ -387,7 +408,7 @@ def main() -> None:
         require_materialized_file(args.voltage_dat)
 
     checkpoint = load_checkpoint(args.model_path, device="cpu")
-    if not is_supported_checkpoint_family(checkpoint.get("model_family")):
+    if not is_supported_alignment_checkpoint(checkpoint):
         raise ValueError(f"{args.model_path} is not a supported aligned LSTM checkpoint.")
 
     reference_model = ReferenceDynamicsModel(**checkpoint["reference_model_kwargs"]).to(args.device)
@@ -397,8 +418,8 @@ def main() -> None:
     decoder_kwargs = dict(checkpoint.get("decoder_kwargs", checkpoint.get("model_kwargs")))
     if "decoder_variant" not in decoder_kwargs and checkpoint_config.get("decoder_variant"):
         decoder_kwargs["decoder_variant"] = checkpoint_config.get("decoder_variant")
-    decoder = build_decoder_model_from_kwargs(decoder_kwargs).to(args.device)
     decoder_state = checkpoint["decoder_state_dict"] if "decoder_state_dict" in checkpoint else checkpoint["model_state_dict"]
+    decoder = build_decoder_model_from_kwargs(decoder_kwargs, state_dict=decoder_state).to(args.device)
     decoder.load_state_dict(decoder_state)
     decoder.eval()
     x_scaler = restore_scaler(checkpoint["x_mean"], checkpoint["x_std"])

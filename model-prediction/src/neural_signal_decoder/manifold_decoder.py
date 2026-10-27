@@ -576,9 +576,21 @@ class DirectLatentLSTMRegressor(nn.Module):
         return self.head(out[:, -1, :])
 
 
-def build_decoder_model_from_kwargs(kwargs: dict[str, object]) -> nn.Module:
+def build_decoder_model_from_kwargs(
+    kwargs: dict[str, object],
+    state_dict: dict[str, torch.Tensor] | None = None,
+) -> nn.Module:
     decoder_variant = str(kwargs.get("decoder_variant", "encoded")).strip().lower()
-    if decoder_variant in {"encoded", "v1", "aligned_lstm", "nomad_lstm"}:
+    known_variants = {"encoded", "v1", "aligned_lstm", "v2", "direct", "aligned_lstm_v2"}
+    if decoder_variant not in known_variants and state_dict is not None:
+        # Older descriptive tags need not determine the network architecture.
+        # Infer it from saved layers; strict state loading still checks shapes.
+        if "lstm.weight_ih_l0" in state_dict:
+            if {"time_encoding.weight", "latent_encoding.weight"}.issubset(state_dict):
+                decoder_variant = "encoded"
+            elif not any(key.startswith(("time_encoding.", "latent_encoding.")) for key in state_dict):
+                decoder_variant = "v2"
+    if decoder_variant in {"encoded", "v1", "aligned_lstm"}:
         return EncodedLatentLSTMRegressor(
             input_dim=int(kwargs["input_dim"]),
             seq_len=int(kwargs["seq_len"]),
@@ -590,7 +602,7 @@ def build_decoder_model_from_kwargs(kwargs: dict[str, object]) -> nn.Module:
             output_dim=int(kwargs.get("output_dim", 2)),
             use_bias=bool(kwargs.get("use_bias", False)),
         )
-    if decoder_variant in {"v2", "direct", "aligned_lstm_v2", "nomad_lstm_v2"}:
+    if decoder_variant in {"v2", "direct", "aligned_lstm_v2"}:
         return DirectLatentLSTMRegressor(
             input_dim=int(kwargs["input_dim"]),
             seq_len=int(kwargs["seq_len"]),

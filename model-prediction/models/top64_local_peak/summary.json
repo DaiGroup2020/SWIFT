@@ -1,6 +1,6 @@
 {
-  "model_family": "nomad_lstm",
-  "model_backend": "nomad_style_dynamics",
+  "model_family": "aligned_lstm",
+  "model_backend": "latent_dynamics",
   "alignment_mode": "align_net_plus_observation_adapters",
   "config": {
     "data_source": "data",
@@ -102,7 +102,7 @@
     "train_sample_stride_bins": 10,
     "window_ms": 1500.0,
     "readin_dim": 144,
-    "nomad_latent_dim": 176,
+    "latent_dim": 176,
     "alignment_hidden_dim": 352,
     "alignment_batch_size": 256,
     "alignment_epochs": 14,
